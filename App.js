@@ -1,20 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as Font from 'expo-font';
+import React, { useState, useEffect } from "react";
+import { View, Text } from "react-native";
 
-export default function App() {
+import { NavigationContainer } from "@react-navigation/native";
+import Tabs from "./src/routes/Tabs";
+
+const App = () => {
+
+  useEffect(() => {
+    const getFonts = async () => {
+      await Font.loadAsync({
+        'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
+        'AsapCondensed-Bold':  require('./assets/fonts/AsapCondensed-Bold.ttf')
+      });
+      setFontsLoaded(true);
+    }
+
+    getFonts()
+  }, []);
+
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  if(!fontsLoaded){
+    return (
+      <View>
+        <Text>Cargando...</Text>
+      </View>
+    )
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+      <NavigationContainer>
+        <Tabs/>
+      </NavigationContainer>
+  )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+export default App;
