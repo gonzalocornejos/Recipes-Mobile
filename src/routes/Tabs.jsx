@@ -2,6 +2,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, Image, StyleSheet } from "react-native";
 
 // Screens
+import LoginScreen from "../screens/Authentication/Login/LoginScreen";
+import RegisterScreen from "../screens/Authentication/Register/RegisterScreen";
+
 import HomeScreen from "../screens/Home/HomeScreen";
 import MyCreatedRecipesScreen from "../screens/MyRecepies/MyCretedRecipes/MyCreatedRecipesScreen";
 import MySavedRecipesScreen from "../screens/MyRecepies/MySavedRecipes/MySavedRecipesScreen";

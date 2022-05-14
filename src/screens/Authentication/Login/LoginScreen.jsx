@@ -5,7 +5,7 @@ import Input from "../../../components/Application/Components/Input";
 import MainButton from "../../../components/Application/Components/MainButton";
 import SecondaryButton from "../../../components/Application/Components/SecondaryButton";
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}) => {
 
     /* Screen en progreso */
 
@@ -20,13 +20,15 @@ const LoginScreen = () => {
     }
 
     const onRegisterPressed = () => {
-        
+        navigation.navigate('Register')
     }
     
     return (
         <View>
             <Image
+                style={styles.pizza}
                 resizeMode="contain"
+                source={require('../../../../assets/images/ui/pizza.png')}
             />
 
            <Text style={styles.logo}>
@@ -67,6 +69,11 @@ const LoginScreen = () => {
 }
 
 const styles = StyleSheet.create({
+    pizza : {
+        position: 'absolute',
+        left: '37%',
+        top: '3%'
+    },
     logo : {
         color: '#FF4B3A',
         fontFamily: "AsapCondensed-Bold",
@@ -78,6 +85,7 @@ const styles = StyleSheet.create({
     input : {
         width: '100%',
         padding: 20,
+        top: '10%',
         alignItems: 'center'
     },
     decoration : {
@@ -92,7 +100,8 @@ const styles = StyleSheet.create({
         marginBottom: '30%'
     },
     buttons : {
-        alignItems: 'center'
+        alignItems: 'center',
+        top: '15%'
     }
 });
 
