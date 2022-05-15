@@ -4,7 +4,7 @@ import HeartIcon from '../Application/Icons/HeartIcon';
 import StarIcon from '../Application/Icons/StarIcon';
 
 
-const Card = ({imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]", score = 0.0, isFavorite}) => {
+const Card = ({imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]", score = 0.0, isFavorite, own = false}) => {
     return ( 
     <View style={styles.card}>
         <ImageBackground 
@@ -14,9 +14,9 @@ const Card = ({imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]", s
             imageStyle={{ borderRadius: 10}}>
             <View style={{width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 10}}>
                 <View style={{position:'absolute', marginLeft: 310, marginTop: 10}}>
-                    {isFavorite ? <HeartIcon/> : <EmptyHearIcon/>}
+                    {own ? <></> : isFavorite ? <HeartIcon/> : <EmptyHearIcon/>}
                 </View> 
-                <View style={styles.scoreDiv}>
+                <View style={styles.scoreContainer}>
                     <StarIcon />  
                     <Text style={styles.score}>{score}</Text>
                 </View>          
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto-Regular',
         fontWeight: 'bold'
     },
-    scoreDiv: {
+    scoreContainer: {
         position:'absolute', 
         flexDirection:'row', 
         flexWrap:'wrap', 

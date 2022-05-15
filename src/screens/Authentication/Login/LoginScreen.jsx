@@ -120,7 +120,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
     return {
       login: (userName, userToken) => dispatch(signIn(userName, userToken)),
-      logout : () => dispatch(signOut())
     }
 };
 
