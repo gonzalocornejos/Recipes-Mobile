@@ -1,11 +1,14 @@
+import axios from "axios";
 import { useState } from "react";
 import { View, Image, StyleSheet, Text } from "react-native"
-import useWindowDimensions from "react-native/Libraries/Utilities/useWindowDimensions"
+import { connect } from "react-redux";
 import Input from "../../../components/Application/Components/Input";
 import MainButton from "../../../components/Application/Components/MainButton";
 import SecondaryButton from "../../../components/Application/Components/SecondaryButton";
+import environment from "../../../constants/environment";
+import { signIn, signOut } from "../../../stores/Authentication/Actions/AuthenticationActions";
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({navigation, login, logout}) => {
 
     /* Screen en progreso */
 
@@ -13,10 +16,16 @@ const LoginScreen = ({navigation}) => {
     const [alias, setAlias] = useState('');
     const [password, setPassword] = useState('');
 
-    const {height} = useWindowDimensions();
+    const [error, setError] = useState();
 
     const onLoginPressed = () => {
-        
+        // axios.post(`${environment.API_URL}/iniciar-sesion`, {
+        //     alias: alias,
+        //     contraseña: password
+        // }).then(res => login(alias, "emptyJWTToken"))
+        // .catch(error => setError("Alias o contraseña incorrecta"))
+
+        login("Prueba", "empty")
     }
 
     const onRegisterPressed = () => {
@@ -72,7 +81,6 @@ const styles = StyleSheet.create({
     pizza : {
         position: 'absolute',
         left: '37%',
-        top: '3%'
     },
     logo : {
         color: '#FF4B3A',
@@ -105,4 +113,16 @@ const styles = StyleSheet.create({
     }
 });
 
-export default LoginScreen;
+const mapStateToProps = state => ({
+    token: state.authentication.userToken
+  });
+
+const mapDispatchToProps = dispatch => {
+    return {
+      login: (userName, userToken) => dispatch(signIn(userName, userToken)),
+      logout : () => dispatch(signOut())
+    }
+};
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(LoginScreen);

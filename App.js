@@ -2,13 +2,14 @@ import 'react-native-gesture-handler';
 
 import * as Font from 'expo-font';
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 
-import { NavigationContainer } from "@react-navigation/native";
-import Tabs from "./src/routes/Tabs";
-import Authentication from './src/routes/Stack';
+import { Provider } from 'react-redux';
+import configureStore from './src/stores/configureStore';
+import AppWrap from './src/routes/AppWrap';
 
 const App = () => {
+  const store = configureStore()
 
   useEffect(() => {
     const getFonts = async () => {
@@ -19,27 +20,23 @@ const App = () => {
       setFontsLoaded(true);
     }
 
-    getFonts()
+    getFonts();
   }, []);
-
+  
   const [fontsLoaded, setFontsLoaded] = useState(false);
-  const [userToken, setUserToken] = useState(true);
-
+  
   if(!fontsLoaded){
     return (
-      <View>
-        <Text>Cargando...</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
       </View>
     )
   }
 
   return (
-      <NavigationContainer>
-        {userToken 
-          ? <Tabs/>
-          : <Authentication/>
-        }
-      </NavigationContainer>
+    <Provider store = { store }>
+      <AppWrap/>
+    </Provider>
   )
 }
 

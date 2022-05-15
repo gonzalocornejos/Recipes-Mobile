@@ -1,0 +1,3 @@
+export const LOGIN_ACTION = 'LOGIN';
+export const LOGOUT_ACTION = 'LOGOUT';
+export const RETRIEVE_TOKEN_ACTION = 'RETRIEVE_TOKEN'
