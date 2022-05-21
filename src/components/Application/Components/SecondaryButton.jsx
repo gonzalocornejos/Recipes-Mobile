@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#0000',  
            
-        width: '90%',
+        width: '65.38%',
         padding: 15,
         marginVertical: 5,
         alignItems: 'center',
