@@ -1,38 +1,35 @@
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Dimensions } from "react-native";
 import { useState } from "react";
-const ImagePicker = require('react-native-image-picker');
+import * as ImagePicker from 'expo-image-picker';
 import MainButton from "../../../components/Application/Components/MainButton";
 
 const CreateRecipeScreen = () => {
     const [nombre,setNombre] = useState();
     const [descripcion,setDescripcion] = useState();
     const [porciones,setPorciones] = useState();
-    const [imagen,setImagen] = useState();
+    const [image , setImage] = useState();
 
-    const selectFile = () => {
-          ImagePicker.launchImageLibrary({
-            mediaType: 'photo',
-            includeBase64: false,
-            maxHeight: 200,
-            maxWidth: 200,
-          },
-          (response) => {
-            console.log(response);
-            this.setState({
-              resourcePath: response
-            });
-          },
-        )
+    const selectFile = async () => {       
+       let result = await ImagePicker.launchImageLibraryAsync({
+           mediaTypes: ImagePicker.MediaTypeOptions.Images,
+           allowsEditing: true,
+           aspect: [6, 3],
+           quality: 1,
+         });  
+
+      if (!result.cancelled) {
+        setImage(result.uri);
+      }
     }
 
     return (
         <View>
             <Text style={styles.titleText}>Informacion General</Text>
             <Text style={styles.imgText}>Foto principal</Text>
-            <TouchableOpacity   style={styles.imgBox}
+            <TouchableOpacity style={styles.imgBox}
                                 onPress={selectFile}>
-                    <Image source={require('../../../../assets/images/ui/img.png')}
-                            style={styles.img}/>
+                    <Image source={image ? {uri: image} : require('../../../../assets/images/ui/img.png')}
+                            style={image ? styles.img : {width: 82 * widthFactor, height: 87 * heightFactor}}/>
             </TouchableOpacity>
             <Text style={styles.nameText}>Nombre</Text>
             <TextInput style={styles.nameInput}
@@ -99,8 +96,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     img: {
-        width: 82*widthFactor,
-        height: 87*heightFactor,
+        width: '100%',
+        height: '100%',
+        borderRadius: 8
     },
     nameText:{
         position: 'absolute',
@@ -119,7 +117,7 @@ const styles = StyleSheet.create({
         width: 326*widthFactor,
         height: 20*heightFactor,
         left: 32*widthFactor,
-        top: 380*heightFactor,
+        top: 360*heightFactor,
         borderBottomColor: '#000000',
         borderBottomWidth: 0.5
     },
@@ -149,7 +147,7 @@ const styles = StyleSheet.create({
     porcionesInput: {
         borderBottomColor: '#000000',
         borderBottomWidth: 0.5,
-        width: 96*widthFactor,
+        width: 96 * widthFactor,
     },
     buttons:{
         position: 'absolute',
