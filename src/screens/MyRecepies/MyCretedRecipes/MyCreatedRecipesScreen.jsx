@@ -9,7 +9,7 @@ import { signOut } from "../../../stores/Authentication/Actions/AuthenticationAc
 const MyCreatedRecipesScreen = ({logout}) => {
     return (
         <View style={styles.inputContainer}>
-            <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+            <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'space-between'}}>
                 <Text style={styles.text}>Mis Recetas</Text>
                 <TouchableOpacity  ableHighlight onPress={() => logout()} style={styles.logout}>
                     <LogoutIcon />
@@ -44,7 +44,7 @@ const MyCreatedRecipesScreen = ({logout}) => {
 
 const styles = StyleSheet.create({
     logout : {
-        marginLeft: '33%',
+        alignSelf: 'center'
     },
     filter: {
         alignSelf: 'center',

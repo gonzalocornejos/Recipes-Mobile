@@ -31,7 +31,8 @@
       "adaptiveIcon": {
         "foregroundImage": "",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "softwareKeyboardLayoutMode" : "pan"
     },
     "web": {
       "favicon": ""

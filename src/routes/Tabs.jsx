@@ -9,6 +9,7 @@ import HomeScreen from "../screens/Home/HomeScreen";
 import MyCreatedRecipesScreen from "../screens/MyRecepies/MyCretedRecipes/MyCreatedRecipesScreen";
 import MySavedRecipesScreen from "../screens/MyRecepies/MySavedRecipes/MySavedRecipesScreen";
 import CreateRecipeScreen from "../screens/Recepies/CreateRecipe/CreateRecipeScreen";
+import AddPasosScreen from "../screens/Recepies/CreateRecipe/AddPasosScreen.jsx";
 
 
 const Tab = createBottomTabNavigator();
@@ -30,7 +31,8 @@ const Tabs = () => {
                    borderTopLeftRadius: 40,
                    borderTopRightRadius: 40,
                    height: 90
-               }, null]
+               }, null],
+               tabBarHideOnKeyboard: true,
            }}>
 
             <Tab.Screen name="Home" component={HomeScreen}
@@ -83,12 +85,21 @@ const Tabs = () => {
                         </View>
                     )
                 }}/>
+
+            <Tab.Screen name="AddPasos" component={AddPasosScreen} options={{
+                    headerShown: false, 
+                    tabBarButton: () => (
+                        <View style={{width:0, height:0}}></View>
+                    ),
+                    tabBarVisible:false //hide tab bar on this screen
+                }}/>
         </Tab.Navigator>
     );
 }
 
 const styles = StyleSheet.create({
     tab : {
+        position:'absolute',
         alignItems: 'center', 
         justifyContent: 'center', 
         backgroundColor: '#D3D1D8', 

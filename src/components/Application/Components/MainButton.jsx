@@ -1,10 +1,10 @@
-import { Text, StyleSheet, Pressable } from "react-native"
+import { Text, StyleSheet, Pressable , TouchableOpacity} from "react-native"
 
 const MainButton = ({onPress, value, active}) => {    
     return (
-        <Pressable onPress={onPress} style={active ? styles.containerInactive : styles.container}>
+        <TouchableOpacity onPress={active ? onPress : () => {}} style={active ? styles.container : styles.containerInactive} activeOpacity={active ? .2 : 1}>
             <Text style={styles.text}>{value}</Text>
-        </Pressable>
+        </TouchableOpacity>
     )
 }
 

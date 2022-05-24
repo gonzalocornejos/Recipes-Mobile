@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Dimensions, KeyboardAvoidingView, Platform } from "react-native";
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import MainButton from "../../../components/Application/Components/MainButton";
 
-const CreateRecipeScreen = () => {
+const CreateRecipeScreen = ({navigation}) => {
     const [nombre,setNombre] = useState();
     const [descripcion,setDescripcion] = useState();
     const [porciones,setPorciones] = useState();
@@ -23,7 +23,9 @@ const CreateRecipeScreen = () => {
     }
 
     return (
-        <View>
+        <KeyboardAvoidingView
+            behavior= {Platform.OS === "ios" ? "padding" : "height"}
+            style={{flex: 1}}>
             <Text style={styles.titleText}>Informacion General</Text>
             <Text style={styles.imgText}>Foto principal</Text>
             <TouchableOpacity style={styles.imgBox}
@@ -34,27 +36,28 @@ const CreateRecipeScreen = () => {
             <Text style={styles.nameText}>Nombre</Text>
             <TextInput style={styles.nameInput}
                         value={nombre}
-                        onChange={(nombre) => setNombre(nombre)}/>
+                        onChangeText={(nombre) => setNombre(nombre)}/>
             <TextInput  style={styles.descInput}
                         placeholder='Descripcion'
                         value={descripcion}
-                        onChange={(descripcion) => setDescripcion(descripcion)}/>
+                        multiline={true}
+                        onChangeText={(descripcion) => setDescripcion(descripcion)}/>
             <View style={styles.porcionesContainer}>
                 <Text>Porciones</Text>
                 <TextInput  style={styles.porcionesInput}
                             keyboardType = 'number-pad'
                             value={porciones}
-                            onChange={(porciones) => setPorciones(porciones)}/>
+                            onChangeText={(porciones) => setPorciones(porciones)}/>
             </View>
             <View style={styles.buttons}>
                <MainButton
                    value="SIGUIENTE"
-                   onPress={null}
-                   active = {(!nombre && !descripcion && !porciones) ? false : true}
+                   onPress={() => {navigation.navigate('AddPasos')}}
+                   active = {(nombre && descripcion && porciones && image) ? true : false}
                    style = {styles.mainButton}
                />   
            </View>  
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
@@ -132,7 +135,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 15*heightFactor,
         textAlign:'left',
-        textAlignVertical: 'top'
+        textAlignVertical: 'top',
     
     },
     porcionesContainer: {
@@ -158,6 +161,6 @@ const styles = StyleSheet.create({
     mainButton: {
         backgroundColor: '#F99F96',
     }
-});
+    });
 
 export default CreateRecipeScreen;

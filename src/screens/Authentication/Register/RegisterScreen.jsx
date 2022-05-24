@@ -92,7 +92,6 @@ const styles = StyleSheet.create({
     },
     buttons : {
         alignItems: 'center',
-        top: '41%'
     }
 });
 

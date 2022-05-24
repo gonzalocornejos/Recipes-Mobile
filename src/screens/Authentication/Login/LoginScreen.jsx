@@ -67,6 +67,7 @@ const LoginScreen = ({navigation, login, logout}) => {
                <MainButton
                    value="INICIAR SESION"
                    onPress={onLoginPressed}
+                   active={true}
                />   
                <SecondaryButton
                    value="REGISTRARSE"
@@ -109,7 +110,6 @@ const styles = StyleSheet.create({
     },
     buttons : {
         alignItems: 'center',
-        top: '15%'
     }
 });
 
