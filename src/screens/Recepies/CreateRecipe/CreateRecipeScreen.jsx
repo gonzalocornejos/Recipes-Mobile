@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     nameInput:{
         position: 'absolute',
         width: 326*widthFactor,
-        height: 20*heightFactor,
+        height: 40*heightFactor,
         left: 32*widthFactor,
         top: 360*heightFactor,
         borderBottomColor: '#000000',

@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView} from 'react-native';
 import {useState} from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
@@ -7,7 +7,7 @@ const AddPasosScreen = () => {
     const [pasos,setPasos] = useState([]);
 
     const agregarPaso = () => {
-        const numero = pasos.length + 1 
+        const numero = pasos ? pasos.length + 1 : 1
         const newPaso = {
             number: {numero},
             title: "",
@@ -17,23 +17,31 @@ const AddPasosScreen = () => {
         setPasos([...pasos,newPaso]);
     }
 
+    const cambiarPaso = (updatedPaso,index) => {
+        let pasosCopy = [...pasos];
+        pasosCopy[index] = updatedPaso;
+        setPasos(pasosCopy)
+    }
+
     return (
         <View style={{flexDirection:'column', alignItems:'center'}}>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
                 <Image style={styles.arrowBtn} source={require('../../../../assets/images/ui/backArrow.png')}/>
                 <Text style={styles.headerText}>Pasos</Text>
             </View>
-            {pasos.map((element) => (
-                <Paso element/>
-            ))}
-            <TouchableOpacity style={styles.botonAgregar} onPress={() => agregarPaso()}>
-                <Text style={styles.agregarText}>+</Text>
-            </TouchableOpacity>
+            <ScrollView style ={{height:550*heightFactor, overflow:'scroll', marginTop:7*heightFactor}} contentContainerStyle={{flexDirection:'column', alignItems:'center'}}>
+                {pasos.map((element,index) => (
+                    <Paso element key={index} index={index} onChange={cambiarPaso}/>
+                ))}
+                <TouchableOpacity style={styles.botonAgregar} onPress={() => agregarPaso()}>
+                    <Text style={styles.agregarText}>+</Text>
+                </TouchableOpacity>
+            </ScrollView>
             <View style = {styles.mainButton}>
                 <MainButton
                     value="PUBLICAR"
                     onPress={null}
-                    active = {false}/>
+                    active = {pasos.length!==0 ? true : false}/>
             </View>  
         </View>
     )
