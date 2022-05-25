@@ -69,7 +69,7 @@ const Paso = ({element,index,onChange}) => {
             <ScrollView horizontal={true}>
                 {images.map((image,index) => (
                     <ImageBackground source={{uri: image.uri}} key={index} style={styles.imgBox}>
-                        <TouchableOpacity onPress={removeImage(index)}>
+                        <TouchableOpacity onPress={(index) => removeImage(index)}>
                             <Image source={image ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
                         </TouchableOpacity>
                     </ImageBackground>

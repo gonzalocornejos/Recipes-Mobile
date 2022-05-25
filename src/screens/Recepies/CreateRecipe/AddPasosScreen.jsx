@@ -1,9 +1,11 @@
 import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView} from 'react-native';
-import {useState} from 'react'
+import {useState, useRef } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
 
 const AddPasosScreen = () => {
+    const scrollViewRef = useRef();
+
     const [pasos,setPasos] = useState([]);
 
     const agregarPaso = () => {
@@ -29,7 +31,10 @@ const AddPasosScreen = () => {
                 <Image style={styles.arrowBtn} source={require('../../../../assets/images/ui/backArrow.png')}/>
                 <Text style={styles.headerText}>Pasos</Text>
             </View>
-            <ScrollView style ={{height:550*heightFactor, overflow:'scroll', marginTop:7*heightFactor}} contentContainerStyle={{flexDirection:'column', alignItems:'center'}}>
+            <ScrollView style ={{height:550*heightFactor, overflow:'scroll', marginTop:7*heightFactor}} 
+            contentContainerStyle={{flexDirection:'column', alignItems:'center'}}
+            ref={scrollViewRef}
+            onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {pasos.map((element,index) => (
                     <Paso element key={index} index={index} onChange={cambiarPaso}/>
                 ))}
