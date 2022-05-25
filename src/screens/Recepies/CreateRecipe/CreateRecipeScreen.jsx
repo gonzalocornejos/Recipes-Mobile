@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Dimensions, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Dimensions, KeyboardAvoidingView, Platform, ImageBackground } from "react-native";
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import MainButton from "../../../components/Application/Components/MainButton";
@@ -22,16 +22,23 @@ const CreateRecipeScreen = ({navigation}) => {
       }
     }
 
+    const removeImage = () => {
+        setImage();
+    }
+
     return (
         <KeyboardAvoidingView
             behavior= {Platform.OS === "ios" ? "padding" : "height"}
             style={{flex: 1}}>
             <Text style={styles.titleText}>Informacion General</Text>
             <Text style={styles.imgText}>Foto principal</Text>
-            <TouchableOpacity style={styles.imgBox}
-                                onPress={selectFile}>
-                    <Image source={image ? {uri: image} : require('../../../../assets/images/ui/img.png')}
-                            style={image ? styles.img : {width: 82 * widthFactor, height: 87 * heightFactor}}/>
+            <TouchableOpacity onPress={selectFile} style={styles.imgBox}>
+                <ImageBackground source={image ? {uri: image} : require('../../../../assets/images/ui/img.png')}
+                        style={image ? styles.img : {width: 82 * widthFactor, height: 87 * heightFactor}}>
+                    <TouchableOpacity onPress={removeImage}>
+                        <Image source={image ? require('../../../../assets/images/ui/close.png') : null} style={styles.cross}/>
+                    </TouchableOpacity>
+                </ImageBackground>
             </TouchableOpacity>
             <Text style={styles.nameText}>Nombre</Text>
             <TextInput style={styles.nameInput}
@@ -95,13 +102,18 @@ const styles = StyleSheet.create({
         top: 149*heightFactor,
         backgroundColor: '#C4C4C480',
         borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center'
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    cross: {
+        width: 37*widthFactor,
+        height: 38*heightFactor,
+        alignSelf: 'flex-end'
     },
     img: {
         width: '100%',
         height: '100%',
-        borderRadius: 8
+        borderRadius: 8,
     },
     nameText:{
         position: 'absolute',

@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView} from 'react-native'
+import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground} from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import {useState} from 'react'
 
@@ -32,6 +32,12 @@ const Paso = ({element,index,onChange}) => {
         updateChanges();
     }
 
+    const removeImage = (index) => {
+        let imagesCopy = [...images];
+        imagesCopy.splice(index,1);
+        setImages(imagesCopy);
+    }
+
     const updateChanges = () => {
         const updatedObject = {
             number: number,
@@ -62,12 +68,17 @@ const Paso = ({element,index,onChange}) => {
                             onChangeText={(descripcion) => updateDescripcion(descripcion)}/>
             <ScrollView horizontal={true}>
                 {images.map((image,index) => (
-                    <Image source={{uri: image.uri}} key={index} style={styles.img}/>
+                    <ImageBackground source={{uri: image.uri}} key={index} style={styles.imgBox}>
+                        <TouchableOpacity onPress={removeImage(index)}>
+                            <Image source={image ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
+                        </TouchableOpacity>
+                    </ImageBackground>
                 ))}
                 <TouchableOpacity style={styles.imgBox}
                                     onPress={selectFile}>
-                        <Image source={require('../../../assets/images/ui/img.png')}
-                                style={{width: 38 * widthFactor, height: 40 * heightFactor}}/>
+                        <ImageBackground source={require('../../../assets/images/ui/img.png')}
+                                style={{width: 38 * widthFactor, height: 40 * heightFactor}}>
+                        </ImageBackground>
                 </TouchableOpacity>
             </ScrollView>
         </View>
@@ -131,11 +142,16 @@ const widthFactor = Dimensions.get('window').width/390;
             textAlignVertical: 'top',
         },
         img: {
-            width: 160.85*widthFactor,
-            height: 70.63*heightFactor,
+            width: '100%',
+            height: '100%',
             borderRadius: 8,
             marginTop: 16*heightFactor,
             marginRight: 8*widthFactor
+        },
+        cross: {
+            width: 37*widthFactor,
+            height: 38*heightFactor,
+            alignSelf: 'flex-end'
         },
         imgBox:{
             width: 160.85*widthFactor,
@@ -145,6 +161,7 @@ const widthFactor = Dimensions.get('window').width/390;
             alignItems: 'center',
             justifyContent: 'center',
             marginTop: 16*heightFactor,
+            marginRight: 8*widthFactor
         }
 });
 
