@@ -2,7 +2,8 @@ import { LOGIN_ACTION, LOGOUT_ACTION, RETRIEVE_TOKEN_ACTION } from "../Constants
 
 const INITIAL_STATE = {
     isLoading: true,
-    userToken: null,
+    userToken: undefined,
+    userName: undefined
 };
 
 const AuthenticationReducer = (state = INITIAL_STATE, action) => {
@@ -17,6 +18,7 @@ const AuthenticationReducer = (state = INITIAL_STATE, action) => {
         return {
           ...state,
           userToken: action.token,
+          userName: action.userName,
           isLoading: false,
         };
       case LOGOUT_ACTION:

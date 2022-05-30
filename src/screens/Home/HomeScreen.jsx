@@ -1,10 +1,58 @@
-import { View, StyleSheet, Text, ScrollView, StatusBar, SafeAreaView, Image  } from "react-native"
+import { View, StyleSheet, Text, ScrollView, StatusBar, SafeAreaView, RefreshControl, TouchableOpacity  } from "react-native"
 import Input from "../../components/Application/Components/Input";
 import FilterIcon from "../../components/Application/Icons/FilterIcon";
 import Card from "../../components/Recipes/Card";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import environment from "../../constants/environment";
+import { connect } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
+import Filter from "../../components/Recipes/Filter";
 
-const HomeScreen = () => {
+
+const HomeScreen = ({nickName}) => {
+    const isFocused = useIsFocused();
+    const [recipes, setRecipes] = useState([])
+    const [filter, setFilter] = useState({
+        filter : {
+            nombre : '',
+            tipoPlatos : [],
+            ingredientes : [],
+            ingredientesExcluidos: [],
+            nickName: '',
+            usuarioLogueado : nickName,
+            soloFavoritos : false
+        },
+        pageNumber : 1,
+        pageSize : 20,
+        sortField : 'RecipeId',
+        sortOrder : 'DESC'
+    })
+    const [refreshing, setRefreshing] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    useEffect(() => {
+        loadRecipes();
+    }, [isFocused])
+
+    const loadRecipes = () => {
+        setRefreshing(true);
+        axios.post(`${environment.API_URL}/recetas/buscar`, filter)
+            .then(response => setRecipes(response.data.items))
+            .catch(error => console.log(error)) 
+            .finally(f => setRefreshing(false))
+    }
+
+    const toggleModal = () => {
+        setModalOpen(!isModalOpen)
+    }
+
     return (
+        <>
+        { isModalOpen 
+            // ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
+            ? <Filter/> 
+            :
         <View style={styles.inputDiv}>
                 <View style={{flexDirection:'row', flexWrap:'wrap'}}>
                     <Text style={styles.text}>Recetas</Text>
@@ -14,31 +62,40 @@ const HomeScreen = () => {
                         placeholder="Buscar"
                         width="87%" 
                     />
-                   <FilterIcon
-                        style={styles.filter}
-                    />
+                   <TouchableOpacity style={styles.touchable} onPress={() => toggleModal()}>
+                            <FilterIcon
+                                style={styles.filter}
+                            />
+                    </TouchableOpacity>    
                 </View>
                
                 <View>
                     <SafeAreaView style={{marginTop:'5%'}}>
-                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 30}}>
-                            {/* 20 recetas */}
-                             <Card author="Matias Fernandez" recipeName="Ensalada de Verduras" score={4.3} isFavorite imageUri={{uri: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aGVhbHRoeSUyMGZvb2R8ZW58MHx8MHx8&w=1000&q=80"}}/>
-                             <Card author="Florencia Lopez" recipeName="Wok de Pollo" score={2.4} imageUri={{uri: "https://media.istockphoto.com/photos/arabic-and-middle-eastern-dinner-table-hummus-tabbouleh-salad-salad-picture-id1175505781?k=20&m=1175505781&s=612x612&w=0&h=STomby2lCtcvpl_hxK6RhknQQWrkvpkHcoDLD4zttFk="}}/>
-                             <Card author="Santiago Fernandez" recipeName="Hamburguesa Vegana" score={3.1} imageUri={{uri: "https://img.freepik.com/free-photo/big-hamburger-with-double-beef-french-fries_252907-8.jpg?w=2000"}}/>
-                             <Card author="Jorge Benavides" recipeName="Ensalada de Verduras" score={4.9} isFavorite imageUri={{uri: "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg"}}/>
-                             <Card author="Santiago Fernandez" recipeName="Wok de pollo" score={3.8} isFavorite imageUri={{uri: "https://www.tasteofhome.com/wp-content/uploads/2018/01/Au-Gratin-Peas-and-Potatoes_EXPS_GHBZ18_11524_E08_08_5b-4.jpg?fit=696,696"}}/>
-                             <Card author="Jorge Benavides" recipeName="Hamburguesa Vegana" score={4.3} imageUri={{uri: "https://www.refrigeratedfrozenfood.com/ext/resources/NEW_RD_Website/DefaultImages/default-pasta.jpg?1430942591"}}/>
-                             <Card author="Santiago Fernandez" recipeName="Estofado" score={2.6} imageUri={{uri: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aGVhbHRoeSUyMGZvb2R8ZW58MHx8MHx8&w=1000&q=80"}}/>
-                             <Card author="Jorge Benavides" recipeName="Ensalada de Verduras" score={4.3} isFavorite imageUri={{uri: "https://media.istockphoto.com/photos/arabic-and-middle-eastern-dinner-table-hummus-tabbouleh-salad-salad-picture-id1175505781?k=20&m=1175505781&s=612x612&w=0&h=STomby2lCtcvpl_hxK6RhknQQWrkvpkHcoDLD4zttFk="}}/>
-                             <Card author="Santiago Fernandez" recipeName="Wok de pollo" score={4.7} imageUri={{uri: "https://img.freepik.com/free-photo/big-hamburger-with-double-beef-french-fries_252907-8.jpg?w=2000"}}/>
-                             <Card author="Jorge Benavides" recipeName="Hamburguesa Vegana" score={3.3} isFavorite imageUri={{uri: "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg"}}/>
-                             <Card author="Florencia Lopez" recipeName="Fideos" score={2.3} imageUri={{uri: "https://www.tasteofhome.com/wp-content/uploads/2018/01/Au-Gratin-Peas-and-Potatoes_EXPS_GHBZ18_11524_E08_08_5b-4.jpg?fit=696,696"}}/>
-                             <Card author="Santiago Fernandez" recipeName="Ensalada de Verduras" score={1.3} imageUri={{uri: "https://www.refrigeratedfrozenfood.com/ext/resources/NEW_RD_Website/DefaultImages/default-pasta.jpg?1430942591"}}/>
+                        <ScrollView 
+                        refreshControl={
+                            <RefreshControl
+                              refreshing={refreshing}
+                              onRefresh={loadRecipes}
+                            />
+                        }
+                        showsVerticalScrollIndicator={false} 
+                        contentContainerStyle={{paddingBottom: 30}}>
+                            {recipes.map((recipe) => (
+                                <Card 
+                                key={recipe.recipeId.toString() + recipe.esFavorito.toString() }
+                                id={recipe.recipeId}
+                                author={recipe.nickName} 
+                                recipeName={recipe.nombre}
+                                score={recipe.valoracionPromedio}
+                                isFavorite={recipe.esFavorito} 
+                                imageUri={recipe.fotoFinal}/>
+                            ))}                            
                         </ScrollView>
                     </SafeAreaView>     
                 </View>                     
-        </View>       
+        </View>  
+      }
+    </>     
     )
 }
 
@@ -58,10 +115,16 @@ const styles = StyleSheet.create({
         paddingTop: StatusBar.currentHeight
     },
     filter: {
-        alignSelf: 'center',
+        alignSelf: 'flex-end',
         marginLeft: '3%'
+    },
+    touchable: {
+        justifyContent: 'center'
     }
 });
 
+const mapStateToProps = state => ({
+    nickName: state.authentication.userName
+  });
 
-export default HomeScreen;
+export default connect(mapStateToProps)(HomeScreen);
