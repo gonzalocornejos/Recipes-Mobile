@@ -1,14 +1,14 @@
 import axios from "axios";
 import { useState } from "react";
-import { View, Image, StyleSheet, Text } from "react-native"
+import { View, Image, StyleSheet, Text, Alert } from "react-native"
 import { connect } from "react-redux";
 import Input from "../../../components/Application/Components/Input";
 import MainButton from "../../../components/Application/Components/MainButton";
 import SecondaryButton from "../../../components/Application/Components/SecondaryButton";
 import environment from "../../../constants/environment";
-import { signIn, signOut } from "../../../stores/Authentication/Actions/AuthenticationActions";
+import { signIn } from "../../../stores/Authentication/Actions/AuthenticationActions";
 
-const LoginScreen = ({navigation, login, logout}) => {
+const LoginScreen = ({navigation, login}) => {
 
     /* Screen en progreso */
 
@@ -19,13 +19,11 @@ const LoginScreen = ({navigation, login, logout}) => {
     const [error, setError] = useState();
 
     const onLoginPressed = () => {
-        // axios.post(`${environment.API_URL}/iniciar-sesion`, {
-        //     alias: alias,
-        //     contraseña: password
-        // }).then(res => login(alias, "emptyJWTToken"))
-        // .catch(error => setError("Alias o contraseña incorrecta"))
-
-        login("Prueba", "empty")
+        axios.post(`${environment.API_URL}/usuarios/iniciar-sesion`, {
+            alias: alias,
+            contraseña: password
+        }).then(res => login(alias, "emptyJWTToken"))
+        .catch(error => Alert.alert("Atención!","Alias o contraseña incorrecta"))
     }
 
     const onRegisterPressed = () => {

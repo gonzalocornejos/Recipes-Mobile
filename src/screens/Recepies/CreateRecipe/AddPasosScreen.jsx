@@ -2,6 +2,7 @@ import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollVie
 import {useState, useRef } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
+import BackArrow from '../../../components/Application/Icons/BackArrow';
 
 const AddPasosScreen = () => {
     const scrollViewRef = useRef();
@@ -28,7 +29,7 @@ const AddPasosScreen = () => {
     return (
         <View style={{flexDirection:'column', alignItems:'center'}}>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
-                <Image style={styles.arrowBtn} source={require('../../../../assets/images/ui/backArrow.png')}/>
+                <BackArrow style={styles.arrowBtn}/>
                 <Text style={styles.headerText}>Pasos</Text>
             </View>
             <ScrollView style ={{height:550*heightFactor, overflow:'scroll', marginTop:7*heightFactor}} 

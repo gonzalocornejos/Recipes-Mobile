@@ -1,44 +1,109 @@
-import { View, Text, StyleSheet, StatusBar, SafeAreaView, ScrollView, TouchableOpacity  } from "react-native"
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, RefreshControl  } from "react-native"
 import { connect } from "react-redux";
 import Input from "../../../components/Application/Components/Input";
 import FilterIcon from "../../../components/Application/Icons/FilterIcon";
 import LogoutIcon from "../../../components/Application/Icons/LogoutIcon";
 import Card from "../../../components/Recipes/Card";
 import { signOut } from "../../../stores/Authentication/Actions/AuthenticationActions";
+import axios from "axios";
+import environment from "../../../constants/environment";
+import { useIsFocused } from "@react-navigation/native";
+import Filter from "../../../components/Recipes/Filter";
 
-const MyCreatedRecipesScreen = ({logout}) => {
+const MyCreatedRecipesScreen = ({logout, nickName}) => {
+    const isFocused = useIsFocused();
+    const [recipes, setRecipes] = useState([])
+    const [filter, setFilter] = useState({
+        filter : {
+            nombre : '',
+            tipoPlatos : [],
+            ingredientes : [],
+            ingredientesExcluidos: [],
+            nickName: '',
+            usuarioLogueado : nickName,
+            soloFavoritos : false,
+            soloPropias : true
+        },
+        pageNumber : 1,
+        pageSize : 20,
+        sortField : 'RecipeId',
+        sortOrder : 'DESC'
+    })
+    const [refreshing, setRefreshing] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    useEffect(() => {
+        loadRecipes();
+    }, [isFocused])
+
+    const loadRecipes = () => {
+        setRefreshing(true);
+        axios.post(`${environment.API_URL}/recetas/buscar`, filter)
+            .then(response => setRecipes(response.data.items))
+            .catch(error => console.log(error)) 
+            .finally(f => setRefreshing(false))     
+    }
+
+    const toggleModal = () => {
+        setModalOpen(!isModalOpen)
+    }
+
     return (
-        <View style={styles.inputContainer}>
-            <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'space-between'}}>
-                <Text style={styles.text}>Mis Recetas</Text>
-                <TouchableOpacity  ableHighlight onPress={() => logout()} style={styles.logout}>
-                    <LogoutIcon />
-                </TouchableOpacity>
-            </View>    
-                <View style={{flexDirection:'row', flexWrap:'wrap'}}>
-                    <Input
-                        placeholder="Buscar"
-                        width="87%" 
-                    />
-                   <FilterIcon
-                        style={styles.filter}
-                    />
-                </View>
-               
-                <View>
-                    <SafeAreaView style={{marginTop:'5%'}}>
-                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 30}}>
-                            {/* 20 recetas */}
-                             <Card own author="Santiago Semhan" recipeName="Ensalada de Verduras" score={4.3} isFavorite imageUri={{uri: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aGVhbHRoeSUyMGZvb2R8ZW58MHx8MHx8&w=1000&q=80"}}/>
-                             <Card own author="Santiago Semhan" recipeName="Hamburguesa Vegana" score={3.1} imageUri={{uri: "https://img.freepik.com/free-photo/big-hamburger-with-double-beef-french-fries_252907-8.jpg?w=2000"}}/>
-                             <Card own author="Santiago Semhan" recipeName="Wok de pollo" score={3.8} isFavorite imageUri={{uri: "https://www.tasteofhome.com/wp-content/uploads/2018/01/Au-Gratin-Peas-and-Potatoes_EXPS_GHBZ18_11524_E08_08_5b-4.jpg?fit=696,696"}}/>
-                             <Card own author="Santiago Semhan" recipeName="Estofado" score={2.6} imageUri={{uri: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aGVhbHRoeSUyMGZvb2R8ZW58MHx8MHx8&w=1000&q=80"}}/>
-                             <Card own author="Santiago Semhan" recipeName="Wok de pollo" score={4.7} imageUri={{uri: "https://img.freepik.com/free-photo/big-hamburger-with-double-beef-french-fries_252907-8.jpg?w=2000"}}/>
-                             <Card own author="Santiago Semhan" recipeName="Ensalada de Verduras" score={1.3} imageUri={{uri: "https://www.refrigeratedfrozenfood.com/ext/resources/NEW_RD_Website/DefaultImages/default-pasta.jpg?1430942591"}}/>
-                        </ScrollView>
-                    </SafeAreaView>     
-                </View>                     
-        </View>       
+        <>
+        { isModalOpen 
+            // ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
+            ? <Filter/> 
+            : 
+            <View style={styles.inputContainer}>
+                <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'space-between'}}>
+                    <Text style={styles.text}>Mis Recetas</Text>
+                    <TouchableOpacity  ableHighlight onPress={() => logout()} style={styles.logout}>
+                        <LogoutIcon />
+                    </TouchableOpacity>
+                </View>    
+                    <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+                        <Input
+                            placeholder="Buscar"
+                            width="87%" 
+                        />
+                        <TouchableOpacity style={styles.touchable} onPress={() => toggleModal()}>
+                            <FilterIcon
+                                style={styles.filter}
+                            />
+                        </TouchableOpacity>                      
+                    </View>
+
+                    <View>
+                        <SafeAreaView style={{marginTop:'5%'}}>
+                            <ScrollView 
+                            refreshControl={
+                                <RefreshControl
+                                  refreshing={refreshing}
+                                  onRefresh={loadRecipes}
+                                />
+                            }
+                            showsVerticalScrollIndicator={false} 
+                            contentContainerStyle={{paddingBottom: 30}}>
+                                {recipes.length === 0 
+                                ? <Text>No tienes recetas guardadas</Text>
+                                : recipes.map((recipe) => (
+                                    <Card 
+                                    own
+                                    key={recipe.recipeId}
+                                    id={recipe.recipeId}
+                                    author={recipe.nickName} 
+                                    recipeName={recipe.nombre}
+                                    score={recipe.valoracionPromedio}
+                                    isFavorite={recipe.esFavorito} 
+                                    imageUri={recipe.fotoFinal}/>
+                                ))} 
+                            </ScrollView>
+                        </SafeAreaView>     
+                    </View>  
+            </View> 
+        }      
+    </>      
     )
 }
 
@@ -47,8 +112,11 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     filter: {
-        alignSelf: 'center',
+        alignSelf: 'flex-end',
         marginLeft: '3%'
+    },
+    touchable: {
+        justifyContent: 'center'
     },
     text: {
         fontSize: 36,
@@ -67,7 +135,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-    token: state.authentication.userToken
+    nickName: state.authentication.userName
   });
 
 const mapDispatchToProps = dispatch => {

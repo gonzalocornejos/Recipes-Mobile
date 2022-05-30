@@ -3,7 +3,7 @@ import { LOGIN_ACTION, LOGOUT_ACTION } from "../Constants";
 export const signIn= (userName, userToken) => {    
     return {
         type: LOGIN_ACTION, 
-        id: userName,
+        userName: userName,
         token: userToken
     };
 }
