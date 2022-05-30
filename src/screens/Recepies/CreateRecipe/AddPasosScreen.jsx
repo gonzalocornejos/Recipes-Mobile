@@ -2,8 +2,9 @@ import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollVie
 import {useState, useRef } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
+import AddButton from '../../../components/Application/Components/AddButton';
 
-const AddPasosScreen = () => {
+const AddPasosScreen = ({navigation}) => {
     const scrollViewRef = useRef();
 
     const [pasos,setPasos] = useState([]);
@@ -28,7 +29,9 @@ const AddPasosScreen = () => {
     return (
         <View style={{flexDirection:'column', alignItems:'center'}}>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
-                <Image style={styles.arrowBtn} source={require('../../../../assets/images/ui/backArrow.png')}/>
+                <TouchableOpacity onPress={() => {navigation.navigate('Create')}} style={styles.arrowBtn}>
+                    <Image style={styles.arrowBtn} source={require('../../../../assets/images/ui/backArrow.png')}/>
+                </TouchableOpacity>
                 <Text style={styles.headerText}>Pasos</Text>
             </View>
             <ScrollView style ={{height:550*heightFactor, overflow:'scroll', marginTop:7*heightFactor}} 
@@ -38,9 +41,7 @@ const AddPasosScreen = () => {
                 {pasos.map((element,index) => (
                     <Paso element key={index} index={index} onChange={cambiarPaso}/>
                 ))}
-                <TouchableOpacity style={styles.botonAgregar} onPress={() => agregarPaso()}>
-                    <Text style={styles.agregarText}>+</Text>
-                </TouchableOpacity>
+                <AddButton onPress={agregarPaso}/>
             </ScrollView>
             <View style = {styles.mainButton}>
                 <MainButton

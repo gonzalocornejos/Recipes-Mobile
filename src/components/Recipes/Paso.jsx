@@ -1,6 +1,8 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground} from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import {useState} from 'react'
+import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
+import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
 
 const Paso = ({element,index,onChange}) => {
     const [number,setNumber] = useState(index+1);
@@ -48,6 +50,30 @@ const Paso = ({element,index,onChange}) => {
         onChange(updatedObject,index)
     }
 
+    const CONTAINER_wIDTH = 345*widthFactor;
+    const TRASHCAN_WIDTH = CONTAINER_wIDTH*0.2;
+
+    const translateX = useSharedValue(0);
+
+    const panGesture = useAnimatedGestureHandler({
+        onActive: (event,context) => {
+            translateX.value = context.startX + event.translationX;
+        },
+        onEnd: () => {
+            translateX.value = -0.2*CONTAINER_wIDTH;
+        },
+    });
+
+    const rStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+             {
+                translateX: translateX.value,
+             },
+            ],
+        }
+    });
+
     return (
         <View style={styles.containter}>
             <View style={{flexDirection:'row', alignItems:'center'}}>
@@ -82,13 +108,14 @@ const Paso = ({element,index,onChange}) => {
                 </TouchableOpacity>
             </ScrollView>
         </View>
+        
     )
 }
 
 const widthFactor = Dimensions.get('window').width/390;
     const heightFactor = Dimensions.get('window').height/844;
 
-    const styles = StyleSheet.create({
+const styles = StyleSheet.create({
         containter:{
             marginTop: 10*heightFactor,
             width: 345*widthFactor,
@@ -97,6 +124,10 @@ const widthFactor = Dimensions.get('window').width/390;
             backgroundColor: '#FFFFFF',
             paddingTop: 7*heightFactor,
             paddingLeft: 15* widthFactor,
+        },
+        paso:{
+            width:'100%',
+            height:'100%'
         },
         numberContainer:{
             width: 26*widthFactor,
