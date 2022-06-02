@@ -4,8 +4,10 @@ import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
 import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
+import { addPasos } from '../../../stores/CreateRecipe/Actions/RecipeActions';
+import { connect } from 'react-redux';
 
-const AddPasosScreen = ({navigation}) => {
+const AddPasosScreen = ({navigation,updatePasos}) => {
     const scrollViewRef = useRef();
 
     const [pasos,setPasos] = useState([]);
@@ -42,6 +44,10 @@ const AddPasosScreen = ({navigation}) => {
         setPasos(data)
     }
 
+    const onPublicar = () => {
+        updatePasos(pasos);
+    }
+
     return (
         <View style={{flexDirection:'column', alignItems:'center'}}>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
@@ -60,7 +66,7 @@ const AddPasosScreen = ({navigation}) => {
             <View style = {styles.mainButton}>
                 <MainButton
                     value="PUBLICAR"
-                    onPress={null}
+                    onPress={onPublicar}
                     active = {pasos.length!==0 && verificarPasos() ? true : false}/>
             </View>  
         </View>
@@ -107,4 +113,10 @@ const AddPasosScreen = ({navigation}) => {
         }
 });
 
-export default AddPasosScreen;
+const mapDispatchToProps = dispatch => {
+    return {
+        updatePasos : (pasos) => dispatch(addPasos(pasos))
+    }
+};
+
+export default connect(mapDispatchToProps)(AddPasosScreen);

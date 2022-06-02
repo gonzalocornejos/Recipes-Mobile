@@ -1,0 +1,4 @@
+export const ADD_GENERAL_INFO = 'ADD_GENERAL_INFO';
+export const ADD_INGREDIENTS = 'ADD_INGREDIENTS';
+export const ADD_CATEGORIES = 'ADD_CATEGORIES' 
+export const ADD_PASOS = 'ADD_PASOS' 

@@ -1,14 +1,19 @@
 import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView} from 'react-native';
-import {useState, useRef } from 'react'
+import {useState, useRef, useEffect } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Ingrediente from "../../../components/Recipes/Ingrediente";
 import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
+import { addIngredientes } from '../../../stores/CreateRecipe/Actions/RecipeActions';
+import { connect } from 'react-redux';
 
-const AddIngredientesScreen = ({navigation}) => {
+const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
     const scrollViewRef = useRef();
-
     const [ingredientes,setIngredientes] = useState([]);
+
+    useEffect(()=> {
+        console.log(recipe)
+    },[])
 
     const agregarIngrediente = () => {
         const newIngrediente = {
@@ -41,6 +46,11 @@ const AddIngredientesScreen = ({navigation}) => {
         return resp;
     }
 
+    const onSiguiente = () => {
+        updateIngredients(ingredientes);
+        navigation.navigate('AddCategorias')
+    }
+
     return (
         <View style={{flexDirection:'column', alignItems:'center'}}>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
@@ -60,7 +70,7 @@ const AddIngredientesScreen = ({navigation}) => {
             <View style = {styles.mainButton}>
                 <MainButton
                     value="SIGUIENTE"
-                    onPress={() => {navigation.navigate('AddCategorias')}}
+                    onPress={() => {onSiguiente}}
                     active = {ingredientes.length!==0 && verificarIngredientes()? true : false}/>
             </View>  
         </View>
@@ -107,4 +117,14 @@ const AddIngredientesScreen = ({navigation}) => {
         }
 });
 
-export default AddIngredientesScreen;
+const mapStateToProps = state => ({
+    recipe: state.recipe
+  });
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updateIngredients : (ingredientes) => dispatch(addIngredientes(ingredientes))
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(AddIngredientesScreen);

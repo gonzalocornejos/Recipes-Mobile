@@ -4,8 +4,10 @@ import MainButton from "../../../components/Application/Components/MainButton";
 import Categoria from "../../../components/Recipes/Categoria";
 import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
+import { addCategorias } from '../../../stores/CreateRecipe/Actions/RecipeActions';
+import { connect } from 'react-redux';
 
-const AddCategoriasScreen = ({navigation}) => {
+const AddCategoriasScreen = ({navigation,updateCategories}) => {
     const scrollViewRef = useRef();
  
 	const [categorias,setCategorias] = useState([]);
@@ -38,6 +40,11 @@ const AddCategoriasScreen = ({navigation}) => {
         return resp;
     }
 
+    const onSiguiente = () => {
+        updateCategories(categorias);
+        navigation.navigate('AddPasos')
+    }
+
 	return (
         <View style={{flexDirection:'column', alignItems:'center'}}>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
@@ -49,14 +56,14 @@ const AddCategoriasScreen = ({navigation}) => {
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {categorias.map((element,index) => (
-                    <Categoria element key={index} index={index} onChange={cambiarCategoria} onDelete={eliminarCategoria}/>
+                    <Categoria element key={index} index={index} onChange={cambiarCategoria} onDelete={(index) => eliminarCategoria(index)}/>
                 ))}
                 <AddButton onPress={agregarCategoria}/>
             </ScrollView>
             <View style = {styles.mainButton}>
                 <MainButton
                     value="SIGUIENTE"
-                    onPress={() => {navigation.navigate('AddPasos')}}
+                    onPress={() => {onSiguiente}}
                     active = {categorias.length!==0 && verificarCategorias()? true : false}/>
             </View>  
         </View>
@@ -103,4 +110,10 @@ const styles = StyleSheet.create({
         }
 });
 
-export default AddCategoriasScreen;
+const mapDispatchToProps = dispatch => {
+    return {
+        updateCategories : (categorias) => dispatch(addCategorias(categorias))
+    }
+};
+
+export default connect(mapDispatchToProps)(AddCategoriasScreen);

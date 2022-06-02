@@ -2,8 +2,10 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Dimensions,
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import MainButton from "../../../components/Application/Components/MainButton";
+import { addGeneralInfo } from "../../../stores/CreateRecipe/Actions/RecipeActions";
+import { connect } from "react-redux";
 
-const CreateRecipeScreen = ({navigation}) => {
+const CreateRecipeScreen = ({navigation,updateGeneralInfo}) => {
     const [nombre,setNombre] = useState();
     const [descripcion,setDescripcion] = useState();
     const [porciones,setPorciones] = useState();
@@ -24,6 +26,11 @@ const CreateRecipeScreen = ({navigation}) => {
 
     const removeImage = () => {
         setImage();
+    }
+
+    const onSiguiente = () => {
+        updateGeneralInfo(nombre,descripcion,porciones,image);
+        navigation.navigate('AddIngredientes')
     }
 
     return (
@@ -59,7 +66,7 @@ const CreateRecipeScreen = ({navigation}) => {
             <View style={styles.buttons}>
                <MainButton
                    value="SIGUIENTE"
-                   onPress={() => {navigation.navigate('AddIngredientes')}}
+                   onPress={() => onSiguiente()}
                    active = {(nombre && descripcion && porciones && image) ? true : false}
                    style = {styles.mainButton}
                />   
@@ -175,4 +182,15 @@ const styles = StyleSheet.create({
     }
     });
 
-export default CreateRecipeScreen;
+const mapStateToProps = state => ({
+    recipe: state.recipe
+});
+    
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updateGeneralInfo : (nombre,descripcion,porciones,imagen) => dispatch(addGeneralInfo(nombre,descripcion,porciones,imagen))
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(CreateRecipeScreen);
