@@ -10,7 +10,8 @@ import MyCreatedRecipesScreen from "../screens/MyRecepies/MyCretedRecipes/MyCrea
 import MySavedRecipesScreen from "../screens/MyRecepies/MySavedRecipes/MySavedRecipesScreen";
 import CreateRecipeScreen from "../screens/Recepies/CreateRecipe/CreateRecipeScreen";
 import AddPasosScreen from "../screens/Recepies/CreateRecipe/AddPasosScreen.jsx";
-
+import AddIngredientesScreen from "../screens/Recepies/CreateRecipe/AddIngredientesScreen.jsx";
+import AddCategoriasScreen from "../screens/Recepies/CreateRecipe/AddCategoriasScreen.jsx";
 
 const Tab = createBottomTabNavigator();
 
@@ -87,6 +88,22 @@ const Tabs = () => {
                 }}/>
 
             <Tab.Screen name="AddPasos" component={AddPasosScreen} options={{
+                    headerShown: false, 
+                    tabBarButton: () => (
+                        <View style={{width:0, height:0}}></View>
+                    ),
+                    tabBarVisible:false //hide tab bar on this screen
+                }}/>
+
+            <Tab.Screen name="AddIngredientes" component={AddIngredientesScreen} options={{
+                    headerShown: false, 
+                    tabBarButton: () => (
+                        <View style={{width:0, height:0}}></View>
+                    ),
+                    tabBarVisible:false //hide tab bar on this screen
+                }}/>
+
+            <Tab.Screen name="AddCategorias" component={AddCategoriasScreen} options={{
                     headerShown: false, 
                     tabBarButton: () => (
                         <View style={{width:0, height:0}}></View>

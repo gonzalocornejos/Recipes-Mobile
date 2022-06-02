@@ -1,67 +1,63 @@
 import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView} from 'react-native';
 import {useState, useRef } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
-import Paso from "../../../components/Recipes/Paso";
+import Categoria from "../../../components/Recipes/Categoria";
 import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
 
-const AddPasosScreen = ({navigation}) => {
+const AddCategoriasScreen = ({navigation}) => {
     const scrollViewRef = useRef();
+ 
+	const [categorias,setCategorias] = useState([]);
 
-    const [pasos,setPasos] = useState([]);
+	const agregarCategoria = () => {
+	        const newCategoria = {
+	            cat:"",
+	            valido: false
+	        }
+	        setCategorias([...categorias,newCategoria]);
+	    }
+	    
+	const cambiarCategoria = (updatedCategoria,index) => {
+	        let categoriasCopy = [...categorias];
+	        categoriasCopy[index] = updatedCategoria;
+	        setCategorias(categoriasCopy)
+	    }
 
-    const agregarPaso = () => {
-        const numero = pasos ? pasos.length + 1 : 1
-        const newPaso = {
-            number: {numero},
-            title: "",
-            descripcion: "",
-            images: [],
-            valido: false
-        }
-        setPasos([...pasos,newPaso]);
-    }
-
-    const cambiarPaso = (updatedPaso,index) => {
-        let pasosCopy = [...pasos];
-        pasosCopy[index] = updatedPaso;
-        setPasos(pasosCopy)
-    }
-
-    const verificarPasos = () => {
+	const eliminarCategoria = (index) => {
+	        let data = [...categorias];
+	        data.splice(index, 1)
+	        setCategorias(data)
+	    } 
+    
+    const verificarCategorias = () => {
         let resp = true;
-        pasos.forEach((paso) => {
-            if(!paso.valido) resp = false;
+        categorias.forEach((categoria) => {
+            if(!categoria.valido) resp = false;
         })
         return resp;
     }
 
-    const eliminarPaso = (index) => {
-        let data = [...pasos];
-        data.splice(index, 1)
-        setPasos(data)
-    }
-
-    return (
+	return (
         <View style={{flexDirection:'column', alignItems:'center'}}>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
-                <BackArrow style={styles.arrowBtn} onPress={() => {navigation.navigate('AddCategorias')}}/>
-                <Text style={styles.headerText}>Pasos</Text>
+                <BackArrow style={styles.arrowBtn} onPress={() => {navigation.navigate('AddIngredientes')}}/>
+                <Text style={styles.headerText}>Categorias</Text>
             </View>
             <ScrollView style ={{height:550*heightFactor, overflow:'scroll', marginTop:7*heightFactor}} 
                         contentContainerStyle={{flexDirection:'column', alignItems:'center'}}
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
-                {pasos.map((element,index) => (
-                    <Paso element key={index} index={index} onChange={cambiarPaso} onDelete={eliminarPaso}/>
+                {categorias.map((element,index) => (
+                    <Categoria element key={index} index={index} onChange={cambiarCategoria} onDelete={eliminarCategoria}/>
                 ))}
-                <AddButton onPress={agregarPaso}/>
+                <AddButton onPress={agregarCategoria}/>
             </ScrollView>
             <View style = {styles.mainButton}>
                 <MainButton
-                    value="PUBLICAR"
-                    onPress={null}
-                    active = {pasos.length!==0 && verificarPasos() ? true : false}/>
+                    value="SIGUIENTE"
+                    onPress={() => {navigation.navigate('AddPasos')}}
+                    active = {categorias.length!==0 && verificarCategorias()? true : false}/>
             </View>  
         </View>
     )
@@ -70,16 +66,16 @@ const AddPasosScreen = ({navigation}) => {
     const widthFactor = Dimensions.get('window').width/390;
     const heightFactor = Dimensions.get('window').height/844;
 
-    const styles = StyleSheet.create({
+const styles = StyleSheet.create({
         arrowBtn:{
             width: 31*widthFactor,
             height: 31*heightFactor,
-            alignSelf: 'flex-end',
+            alignSelf: 'center',
             marginLeft: 21*widthFactor,
         },
         headerText:{
-            width: 113*widthFactor,
-            height: 42*heightFactor,
+            width: 180*widthFactor,
+            height: 53*heightFactor,
             fontFamily: 'Roboto',
             fontWeight: 'bold',
             fontSize: 36*heightFactor,
@@ -107,4 +103,4 @@ const AddPasosScreen = ({navigation}) => {
         }
 });
 
-export default AddPasosScreen;
+export default AddCategoriasScreen;

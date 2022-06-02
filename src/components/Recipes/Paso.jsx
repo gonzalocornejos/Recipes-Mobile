@@ -1,14 +1,15 @@
-import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground} from 'react-native'
+import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground,Pressable} from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import {useState} from 'react'
 import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
 import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
 
-const Paso = ({element,index,onChange}) => {
+const Paso = ({element,index,onChange,onDelete}) => {
     const [number,setNumber] = useState(index+1);
     const [title,setTitle] = useState(element.title);
     const [descripcion,setDescripcion] = useState(element.descripcion);
     const [images,setImages] = useState(element.images ? images : []);
+    const [valido,setValido] = useState(element.valido);
 
     const selectFile = async () => {       
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -26,11 +27,13 @@ const Paso = ({element,index,onChange}) => {
 
     const updateTitle = (newTitle) => {
         setTitle(newTitle);
+        verificarValidez();
         updateChanges();
     }
 
     const updateDescripcion = (newDescripcion) => {
         setDescripcion(newDescripcion);
+        verificarValidez();
         updateChanges();
     }
 
@@ -45,10 +48,16 @@ const Paso = ({element,index,onChange}) => {
             number: number,
             title: title,
             descripcion: descripcion,
-            images: images
+            images: images,
+            valido: valido
         }
         onChange(updatedObject,index)
     }
+
+    const verificarValidez = () => {
+        if (title!==null && descripcion!==null) setValido(true);
+    }
+
 
     const CONTAINER_wIDTH = 345*widthFactor;
     const TRASHCAN_WIDTH = CONTAINER_wIDTH*0.2;
@@ -75,7 +84,7 @@ const Paso = ({element,index,onChange}) => {
     });
 
     return (
-        <View style={styles.containter}>
+        <Pressable onLongPress={()=>onDelete(number-1)} style={styles.containter}>
             <View style={{flexDirection:'row', alignItems:'center'}}>
                 <View style={styles.numberContainer}>
                     <Text style={styles.numberText}>{number}</Text>
@@ -107,7 +116,7 @@ const Paso = ({element,index,onChange}) => {
                         </ImageBackground>
                 </TouchableOpacity>
             </ScrollView>
-        </View>
+        </Pressable>
         
     )
 }

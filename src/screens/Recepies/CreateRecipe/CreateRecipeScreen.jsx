@@ -59,7 +59,7 @@ const CreateRecipeScreen = ({navigation}) => {
             <View style={styles.buttons}>
                <MainButton
                    value="SIGUIENTE"
-                   onPress={() => {navigation.navigate('AddPasos')}}
+                   onPress={() => {navigation.navigate('AddIngredientes')}}
                    active = {(nombre && descripcion && porciones && image) ? true : false}
                    style = {styles.mainButton}
                />   
