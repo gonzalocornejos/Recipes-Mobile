@@ -6,13 +6,28 @@ import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
 import { addIngredientes } from '../../../stores/CreateRecipe/Actions/RecipeActions';
 import { connect } from 'react-redux';
+import axios from "axios";
+import environment from "../../../constants/environment";
 
 const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
     const scrollViewRef = useRef();
     const [ingredientes,setIngredientes] = useState([]);
 
+    const [dbFilters, setdbFilters] = useState({
+        unidades: [{
+            id: 0,
+            item: 'Cargando...'
+        }],
+        ingredientes: [{
+            id: 0,
+            item: 'Cargando...'
+        }]
+    })
+
     useEffect(()=> {
-        console.log(recipe)
+        axios.get(`${environment.API_URL}/recetas/filtros`)
+            .then(response => setdbFilters(response.data))
+            .catch(error => console.log(error))
     },[])
 
     const agregarIngrediente = () => {
@@ -47,6 +62,7 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
     }
 
     const onSiguiente = () => {
+        console.log('entro')
         updateIngredients(ingredientes);
         navigation.navigate('AddCategorias')
     }
@@ -62,7 +78,7 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
             ref={scrollViewRef}
             onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {ingredientes.map((element,index) => (
-                    <Ingrediente element key={index} index={index} onChange={cambiarIngrediente} onDelete={eliminarIngrediente}/>
+                    <Ingrediente element key={index} index={index} onChange={cambiarIngrediente} onDelete={eliminarIngrediente} unidades={dbFilters.unidades}/>
                 ))}
                 <AddButton onPress={agregarIngrediente}/>
                 {/*<AddButton onPress={eliminarIngrediente}/>*/}
@@ -70,7 +86,7 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
             <View style = {styles.mainButton}>
                 <MainButton
                     value="SIGUIENTE"
-                    onPress={() => {onSiguiente}}
+                    onPress={onSiguiente}
                     active = {ingredientes.length!==0 && verificarIngredientes()? true : false}/>
             </View>  
         </View>

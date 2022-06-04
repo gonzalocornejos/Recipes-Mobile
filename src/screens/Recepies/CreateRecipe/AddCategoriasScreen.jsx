@@ -1,16 +1,35 @@
 import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView} from 'react-native';
-import {useState, useRef } from 'react'
+import {useState, useRef, useEffect } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Categoria from "../../../components/Recipes/Categoria";
 import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
 import { addCategorias } from '../../../stores/CreateRecipe/Actions/RecipeActions';
 import { connect } from 'react-redux';
+import axios from "axios";
+import environment from "../../../constants/environment";
 
 const AddCategoriasScreen = ({navigation,updateCategories}) => {
     const scrollViewRef = useRef();
  
 	const [categorias,setCategorias] = useState([]);
+
+    const [dbFilters, setdbFilters] = useState({
+        unidades: [{
+            id: 0,
+            item: 'Cargando...'
+        }],
+        categorias: [{
+            id: 0,
+            item: 'Cargando...'
+        }]
+    })
+
+    useEffect(()=> {
+        axios.get(`${environment.API_URL}/recetas/filtros`)
+            .then(response => setdbFilters(response.data))
+            .catch(error => console.log(error))
+    },[])
 
 	const agregarCategoria = () => {
 	        const newCategoria = {
@@ -56,14 +75,14 @@ const AddCategoriasScreen = ({navigation,updateCategories}) => {
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {categorias.map((element,index) => (
-                    <Categoria element key={index} index={index} onChange={cambiarCategoria} onDelete={(index) => eliminarCategoria(index)}/>
+                    <Categoria element key={index} index={index} onChange={cambiarCategoria} onDelete={(index) => eliminarCategoria(index)} categorias={dbFilters.categorias}/>
                 ))}
                 <AddButton onPress={agregarCategoria}/>
             </ScrollView>
             <View style = {styles.mainButton}>
                 <MainButton
                     value="SIGUIENTE"
-                    onPress={() => {onSiguiente}}
+                    onPress={() => {onSiguiente()}}
                     active = {categorias.length!==0 && verificarCategorias()? true : false}/>
             </View>  
         </View>
@@ -110,10 +129,14 @@ const styles = StyleSheet.create({
         }
 });
 
+const mapStateToProps = state => ({
+    recipe: state.recipe
+  });
+
 const mapDispatchToProps = dispatch => {
     return {
         updateCategories : (categorias) => dispatch(addCategorias(categorias))
     }
 };
 
-export default connect(mapDispatchToProps)(AddCategoriasScreen);
+export default connect(mapStateToProps,mapDispatchToProps)(AddCategoriasScreen);

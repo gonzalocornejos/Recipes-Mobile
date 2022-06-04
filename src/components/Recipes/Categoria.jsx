@@ -1,17 +1,34 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground} from 'react-native'
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
 import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
 import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
 
 
-const Categoria = ({element,index,onChange,onDelete}) => {
+const Categoria = ({element,index,onChange,onDelete,categorias}) => {
     const [cat,setCat] = useState(element.cat)
     const [number,setNumber] = useState(index)
     const [valido,setValido] = useState(element.valido)
+    const [categoriasList,setCategoriasList] = useState([]);
+
+    useEffect(()=>{
+        let data = [...categoriasList]
+        categorias.forEach((categoria)=>{
+            let newCategoria = {
+                label: categoria.item,
+                value: categoria.id
+            }
+            data.push(newCategoria);
+        })
+        setCategoriasList(data)
+    },[])
 
     const updateCat = (newCat) => {
-        setCat(newCat);
+        let newRCat
+        categorias.forEach((categoria) => {
+            if (newCat !== null && newCat.value === categoria.id) {newRCat = categoria;}
+        })
+        setCat(newRCat);
         verificarValidez();
         updateChanges();
     } 
@@ -61,12 +78,7 @@ const Categoria = ({element,index,onChange,onDelete}) => {
                         <RNPickerSelect
                             value={cat}
                             style={pickerSelectStyles}
-                            items={[
-                            { label: "Pastas", value: "Pastas" },
-                            { label: "Carnes", value: "Carnes" },
-                            { label: "Salsas", value: "Salsas" },
-                            { label: "Postres", value: "Postres" },
-                            ]}
+                            items={categoriasList}
                             onValueChange={(cat) => updateCat(cat)}
                             useNativeAndroidPickerStyle={false}
                             Icon={() => {return <Image source={require('../../../assets/images/ui/dropDownArrow.png')}/>}}/>

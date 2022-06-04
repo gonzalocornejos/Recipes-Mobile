@@ -1,16 +1,29 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, Pressable} from 'react-native'
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
 import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
 import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
 import BackArrow from '../../components/Application/Icons/BackArrow';
 
-const Ingrediente = ({element,index,onChange,onDelete}) => {
+const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
     const [name,setName] = useState(element.name);
     const [cant,setCant] = useState(element.cant);
     const [unit,setUnidad] = useState(element.unit);
     const [desc,setDesc] = useState(element.desc);
     const [valido,setValido] = useState(element.valido);
+    const [unidadesList,setUnidadesList] = useState([]);
+
+    useEffect(()=>{
+        let data = [...unidadesList]
+        unidades.forEach((unidad)=>{
+            let newUnidad = {
+                label: unidad.item,
+                value: unidad.id
+            }
+            data.push(newUnidad);
+        })
+        setUnidadesList(data)
+    },[])
 
     const updateName = (newName) => {
         setName(newName);
@@ -25,7 +38,11 @@ const Ingrediente = ({element,index,onChange,onDelete}) => {
     }
 
     const updateUnit = (newUnit) => {
-        setUnidad(newUnit);
+        let newRUnit
+        unidades.forEach((unidad) => {
+            if (newUnit !== null && newUnit.value === unidad.id) {newRUnit = unidad;}
+        })
+        setUnidad(newRUnit);
         verificarValidez();
         updateChanges();
     }
@@ -33,8 +50,6 @@ const Ingrediente = ({element,index,onChange,onDelete}) => {
         setDesc(newDesc);
         updateChanges();
     }
-
-    
 
     const updateChanges = () => {
         const updatedObject = {
@@ -48,32 +63,8 @@ const Ingrediente = ({element,index,onChange,onDelete}) => {
     }
 
     const verificarValidez = () => {
-        if (name!==null && cant!==null && unit!== "") setValido(true);
+        if (name!==null && cant!==null && unit!== null) setValido(true);
     }
-
-    const CONTAINER_wIDTH = 345*widthFactor;
-    const TRASHCAN_WIDTH = CONTAINER_wIDTH*0.2;
-
-    const translateX = useSharedValue(0);
-
-    const panGesture = useAnimatedGestureHandler({
-        onActive: (event,context) => {
-            translateX.value = context.startX + event.translationX;
-        },
-        onEnd: () => {
-            translateX.value = -0.2*CONTAINER_wIDTH;
-        },
-    });
-
-    const rStyle = useAnimatedStyle(() => {
-        return {
-            transform: [
-             {
-                translateX: translateX.value,
-             },
-            ],
-        }
-    });
 
     return (
         <Pressable onLongPress={() => {onDelete(index)}} style={styles.containter}>
@@ -95,12 +86,7 @@ const Ingrediente = ({element,index,onChange,onDelete}) => {
                     <RNPickerSelect
                         value={unit}
                         style={pickerSelectStyles}
-                        items={[
-                        { label: "Kg", value: "Kg" },
-                        { label: "g", value: "g" },
-                        { label: "lt", value: "lt" },
-                        { label: "ml", value: "ml" },
-                        ]}
+                        items={unidadesList}
                         onValueChange={(unit) => updateUnit(unit)}
                         useNativeAndroidPickerStyle={false}
                         Icon={() => {return <Image source={require('../../../assets/images/ui/dropDownArrow.png')}/>}}/>
