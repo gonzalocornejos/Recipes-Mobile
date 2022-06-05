@@ -35,7 +35,7 @@ const Card = ({navigation, id, imageUri, recipeName = "[INDEFINIDO]", author = "
                     </TouchableOpacity>                  
                 </View> 
                 <View style={styles.scoreContainer}>
-                    <StarIcon />  
+                    <StarIcon isActive={true}/>  
                     <Text style={styles.score}>{score}</Text>
                 </View>          
                 <View style={{width: '100%', marginTop: 95, position:'absolute'}}>
