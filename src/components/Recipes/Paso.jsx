@@ -78,11 +78,11 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
                             onChangeText={(descripcion) => updateDescripcion(descripcion)}
                             editable={!isViewMode}/>
             <ScrollView horizontal={true}>
-                {images?.map((image,index) => (
-                    <ImageBackground source={{uri: image}} key={index} style={styles.imgBox}>
+                {media?.map((media,index) => (
+                    <ImageBackground source={{uri: media}} key={media} style={styles.imgBox}>
                         {!isViewMode 
                         ? <TouchableOpacity onPress={() => removeImage(index)}>
-                            <Image source={image ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
+                            <Image source={media ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
                         </TouchableOpacity>
                         : <></>}
                     </ImageBackground>
