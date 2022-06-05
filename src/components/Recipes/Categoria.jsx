@@ -1,12 +1,9 @@
-import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground} from 'react-native'
+import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet} from 'react-native'
 import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
-import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
-import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
-
 
 const Categoria = ({element,index,onChange,onDelete,categorias}) => {
-    const [cat,setCat] = useState(element.cat)
+    const [categoria,setCategoria] = useState(element.categoria)
     const [number,setNumber] = useState(index)
     const [valido,setValido] = useState(element.valido)
     const [categoriasList,setCategoriasList] = useState([]);
@@ -28,47 +25,22 @@ const Categoria = ({element,index,onChange,onDelete,categorias}) => {
         categorias.forEach((categoria) => {
             if (newCat !== null && newCat.value === categoria.id) {newRCat = categoria;}
         })
-        setCat(newRCat);
+        setCategoria(newRCat);
         verificarValidez();
         updateChanges();
     } 
 
     const updateChanges = () => {
         const updatedObject = {
-            cat: cat,
+            categoria: categoria,
             valido: valido
         }
         onChange(updatedObject,index)
     }
 
     const verificarValidez = () => {
-        if (cat!==null) setValido(true);
+        if (categoria!==null) setValido(true);
     }
-
-  	const CONTAINER_wIDTH = 345*widthFactor;
-    const TRASHCAN_WIDTH = CONTAINER_wIDTH*0.2;
-
-    const translateX = useSharedValue(0);
-
-    const panGesture = useAnimatedGestureHandler({
-        onActive: (event,context) => {
-            translateX.value = context.startX + event.translationX;
-        },
-        onEnd: () => {
-            translateX.value = -0.2*CONTAINER_wIDTH;
-        },
-    });
-
-    const rStyle = useAnimatedStyle(() => {
-        return {
-            transform: [
-             {
-                translateX: translateX.value,
-             },
-            ],
-        }
-    });
-
 
       return (
         <View style={styles.containter}>
@@ -76,7 +48,7 @@ const Categoria = ({element,index,onChange,onDelete,categorias}) => {
                     <Text style={styles.categText}>Categoria</Text>
                     <View style={{flexDirection:'row', alignItems:'center'}}>
                         <RNPickerSelect
-                            value={cat}
+                            value={categoria}
                             style={pickerSelectStyles}
                             items={categoriasList}
                             onValueChange={(cat) => updateCat(cat)}

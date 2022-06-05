@@ -33,7 +33,7 @@ const AddCategoriasScreen = ({navigation,updateCategories}) => {
 
 	const agregarCategoria = () => {
 	        const newCategoria = {
-	            cat:"",
+	            categoria:{},
 	            valido: false
 	        }
 	        setCategorias([...categorias,newCategoria]);

@@ -12,19 +12,15 @@ import environment from "../../../constants/environment";
 const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
     const scrollViewRef = useRef();
     const [ingredientes,setIngredientes] = useState([]);
-
-    const [dbFilters, setdbFilters] = useState({
-        unidades: [{
-            id: 0,
-            item: 'Cargando...'
-        }],
-        ingredientes: [{
-            id: 0,
-            item: 'Cargando...'
-        }]
-    })
+    const [dbFilters, setdbFilters] = useState({})
 
     useEffect(()=> {
+        setdbFilters({
+            unidades: [{
+                id: 0,
+                item: 'Cargando...'
+            }],
+        })
         axios.get(`${environment.API_URL}/recetas/filtros`)
             .then(response => setdbFilters(response.data))
             .catch(error => console.log(error))
@@ -32,10 +28,10 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
 
     const agregarIngrediente = () => {
         const newIngrediente = {
-            name:"",
-            cant: "",
-            unit:"",
-            desc: "",
+            nombre:"",
+            cantidad: "",
+            unidad:{},
+            descripcion: "",
             valido: false
         }
         setIngredientes([...ingredientes,newIngrediente]);
@@ -62,7 +58,6 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
     }
 
     const onSiguiente = () => {
-        console.log('entro')
         updateIngredients(ingredientes);
         navigation.navigate('AddCategorias')
     }

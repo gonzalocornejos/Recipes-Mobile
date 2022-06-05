@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView} from 'react-native';
-import {useState, useRef } from 'react'
+import {useState, useRef, useEffect } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
 import AddButton from '../../../components/Application/Components/AddButton';
@@ -7,18 +7,22 @@ import BackArrow from '../../../components/Application/Icons/BackArrow';
 import { addPasos } from '../../../stores/CreateRecipe/Actions/RecipeActions';
 import { connect } from 'react-redux';
 
-const AddPasosScreen = ({navigation,updatePasos}) => {
+const AddPasosScreen = ({navigation,updatePasos,recipe}) => {
     const scrollViewRef = useRef();
 
     const [pasos,setPasos] = useState([]);
+
+    useEffect(() => {
+        console.log(recipe);
+    }, [])
 
     const agregarPaso = () => {
         const numero = pasos ? pasos.length + 1 : 1
         const newPaso = {
             number: {numero},
-            title: "",
+            titulo: "",
             descripcion: "",
-            images: [],
+            media: [],
             valido: false
         }
         setPasos([...pasos,newPaso]);
@@ -46,6 +50,7 @@ const AddPasosScreen = ({navigation,updatePasos}) => {
 
     const onPublicar = () => {
         updatePasos(pasos);
+        console.log(recipe);
     }
 
     return (
@@ -59,7 +64,7 @@ const AddPasosScreen = ({navigation,updatePasos}) => {
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {pasos.map((element,index) => (
-                    <Paso element key={index} index={index} onChange={cambiarPaso} onDelete={eliminarPaso}/>
+                    <Paso element key={index+element.titulo+element.descripcion+element.media} index={index} onChange={cambiarPaso} onDelete={eliminarPaso}/>
                 ))}
                 <AddButton onPress={agregarPaso}/>
             </ScrollView>
@@ -113,10 +118,14 @@ const AddPasosScreen = ({navigation,updatePasos}) => {
         }
 });
 
+const mapStateToProps = state => ({
+    recipe: state.recipe
+  });
+
 const mapDispatchToProps = dispatch => {
     return {
         updatePasos : (pasos) => dispatch(addPasos(pasos))
     }
 };
 
-export default connect(mapDispatchToProps)(AddPasosScreen);
+export default connect(mapStateToProps,mapDispatchToProps)(AddPasosScreen);

@@ -1,15 +1,12 @@
-import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, Pressable} from 'react-native'
+import { View, Text, Image, TextInput, Dimensions, StyleSheet, Pressable} from 'react-native'
 import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
-import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
-import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
-import BackArrow from '../../components/Application/Icons/BackArrow';
 
 const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
-    const [name,setName] = useState(element.name);
-    const [cant,setCant] = useState(element.cant);
-    const [unit,setUnidad] = useState(element.unit);
-    const [desc,setDesc] = useState(element.desc);
+    const [nombre,setNombre] = useState(element.nombre);
+    const [cantidad,setCantidad] = useState(element.cantidad);
+    const [unidad,setUnidad] = useState(element.unidad);
+    const [descripcion,setDescripcion] = useState(element.descripcion);
     const [valido,setValido] = useState(element.valido);
     const [unidadesList,setUnidadesList] = useState([]);
 
@@ -26,13 +23,13 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
     },[])
 
     const updateName = (newName) => {
-        setName(newName);
+        setNombre(newName);
         verificarValidez();
         updateChanges();
     } 
 
     const updateCant = (newCant) => {
-        setCant(newCant);
+        setCantidad(newCant);
         verificarValidez();
         updateChanges();
     }
@@ -47,23 +44,23 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
         updateChanges();
     }
     const updateDesc = (newDesc) => {
-        setDesc(newDesc);
+        setDescripcion(newDesc);
         updateChanges();
     }
 
     const updateChanges = () => {
         const updatedObject = {
-            name: name,
-            cant: cant,
-            unit: unit,
-            desc: desc,
+            nombre: nombre,
+            cantidad: cantidad,
+            unidad: unidad,
+            descripcion: descripcion,
             valido: valido
         }
         onChange(updatedObject,index)
     }
 
     const verificarValidez = () => {
-        if (name!==null && cant!==null && unit!== null) setValido(true);
+        if (nombre!==null && cantidad!==null && unidad!== null) setValido(true);
     }
 
     return (
@@ -71,20 +68,20 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
             <View style={{flexDirection:'row', alignItems:'center', width: 70*widthFactor,height: 42*heightFactor}}>
                 <View style={styles.nameContainer}>
                     <Text style={styles.nameText}>Nombre</Text>
-                    <TextInput value={name} 
+                    <TextInput value={nombre} 
                                 style={styles.nameInput}
                                 onChangeText={(name) => updateName(name)}/>
                 </View>
                 <View style={{paddingLeft:24*widthFactor, flexDirection:'column'}}>
                     <Text style={styles.cantText}>Cantidad</Text>
-                    <TextInput value={cant} 
+                    <TextInput value={cantidad} 
                                 style={styles.CantInput}
                                 onChangeText={(cant) => updateCant(cant)}/>
                 </View>
                 <View style={{paddingLeft:24*widthFactor, flexDirection:'column'}}>
                     <Text style={styles.unidadText}>Unidad</Text>
                     <RNPickerSelect
-                        value={unit}
+                        value={unidad}
                         style={pickerSelectStyles}
                         items={unidadesList}
                         onValueChange={(unit) => updateUnit(unit)}
@@ -94,7 +91,7 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
             </View>
             <TextInput  style={styles.descInput}
                             placeholder='Descripcion'
-                            value={desc}
+                            value={descripcion}
                             multiline={true}
                             onChangeText={(desc) => updateDesc(desc)}/>
             

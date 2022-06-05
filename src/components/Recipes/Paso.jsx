@@ -1,15 +1,17 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground,Pressable} from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
-import {useState} from 'react'
-import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
-import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
+import {useState,useEffect} from 'react'
 
 const Paso = ({element,index,onChange,onDelete}) => {
     const [number,setNumber] = useState(index+1);
-    const [title,setTitle] = useState(element.title);
+    const [titulo,setTitulo] = useState(element.titulo);
     const [descripcion,setDescripcion] = useState(element.descripcion);
-    const [images,setImages] = useState(element.images ? images : []);
+    const [media,setMedia] = useState(element.media ? element.media : []);
     const [valido,setValido] = useState(element.valido);
+
+    useEffect(() => {
+        updateChanges();
+    },[titulo,descripcion,media,valido])
 
     const selectFile = async () => {       
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -20,68 +22,40 @@ const Paso = ({element,index,onChange,onDelete}) => {
           });  
  
        if (!result.cancelled) {
-         setImages([...images,result]);
-         updateChanges();
+         setMedia([...media,result]);
        }
      }
 
     const updateTitle = (newTitle) => {
-        setTitle(newTitle);
+        setTitulo(newTitle);
         verificarValidez();
-        updateChanges();
     }
 
     const updateDescripcion = (newDescripcion) => {
         setDescripcion(newDescripcion);
         verificarValidez();
-        updateChanges();
     }
 
     const removeImage = (index) => {
-        let imagesCopy = [...images];
-        imagesCopy.splice(index,1);
-        setImages(imagesCopy);
+        let mediaCopy = [...media];
+        mediaCopy.splice(index,1);
+        setMedia(mediaCopy);
     }
 
     const updateChanges = () => {
         const updatedObject = {
             number: number,
-            title: title,
+            titulo: titulo,
             descripcion: descripcion,
-            images: images,
+            media: media,
             valido: valido
         }
         onChange(updatedObject,index)
     }
 
     const verificarValidez = () => {
-        if (title!==null && descripcion!==null) setValido(true);
+        if (titulo!==null && descripcion!==null) setValido(true);
     }
-
-
-    const CONTAINER_wIDTH = 345*widthFactor;
-    const TRASHCAN_WIDTH = CONTAINER_wIDTH*0.2;
-
-    const translateX = useSharedValue(0);
-
-    const panGesture = useAnimatedGestureHandler({
-        onActive: (event,context) => {
-            translateX.value = context.startX + event.translationX;
-        },
-        onEnd: () => {
-            translateX.value = -0.2*CONTAINER_wIDTH;
-        },
-    });
-
-    const rStyle = useAnimatedStyle(() => {
-        return {
-            transform: [
-             {
-                translateX: translateX.value,
-             },
-            ],
-        }
-    });
 
     return (
         <Pressable onLongPress={()=>onDelete(number-1)} style={styles.containter}>
@@ -91,7 +65,7 @@ const Paso = ({element,index,onChange,onDelete}) => {
                 </View>
                 <View style={{paddingLeft:20*widthFactor}}>
                     <Text style={styles.titleText}>Nombre</Text>
-                    <TextInput value={title} 
+                    <TextInput value={titulo} 
                                 style={styles.titleInput}
                                 onChangeText={(title) => updateTitle(title)}></TextInput>
                 </View>
@@ -102,10 +76,10 @@ const Paso = ({element,index,onChange,onDelete}) => {
                             multiline={true}
                             onChangeText={(descripcion) => updateDescripcion(descripcion)}/>
             <ScrollView horizontal={true}>
-                {images.map((image,index) => (
-                    <ImageBackground source={{uri: image.uri}} key={index} style={styles.imgBox}>
+                {media.map((media,index) => (
+                    <ImageBackground source={{uri: media.uri}} key={index} style={styles.imgBox}>
                         <TouchableOpacity onPress={() => removeImage(index)}>
-                            <Image source={image ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
+                            <Image source={media ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
                         </TouchableOpacity>
                     </ImageBackground>
                 ))}
