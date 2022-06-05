@@ -6,16 +6,18 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
     const [nombre,setNombre] = useState(element.nombre);
     const [cantidad,setCantidad] = useState(element.cantidad);
     const [unidad,setUnidad] = useState(element.unidad);
+    const [unidadNombre, setUnidadNombre] = useState('');
     const [descripcion,setDescripcion] = useState(element.descripcion);
     const [valido,setValido] = useState(element.valido);
     const [unidadesList,setUnidadesList] = useState([]);
 
     useEffect(()=>{
+        console.log("ingrediente", element.unidad)
         let data = [...unidadesList]
         unidades.forEach((unidad)=>{
             let newUnidad = {
                 label: unidad.item,
-                value: unidad.item
+                value: unidad.id
             }
             data.push(newUnidad);
         })
@@ -37,9 +39,12 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
     const updateUnit = (newUnit) => {
         let newRUnit
         unidades.forEach((unidad) => {
-            if (newUnit !== null && newUnit.value === unidad.id) {newRUnit = unidad;}
+            if (newUnit !== null && newUnit === unidad.id) {
+                newRUnit = unidad;
+            }
         })
-        setUnidad(newRUnit);
+        setUnidad(newUnit);
+        setUnidadNombre(newRUnit ? newRUnit.item : '');
         verificarValidez();
         updateChanges();
     }
@@ -50,9 +55,10 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
 
     const updateChanges = () => {
         const updatedObject = {
+            id: element.id,
             nombre: nombre,
             cantidad: cantidad,
-            unidad: unidad,
+            unidad: unidadNombre,
             descripcion: descripcion,
             valido: valido
         }

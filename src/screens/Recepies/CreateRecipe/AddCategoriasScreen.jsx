@@ -8,6 +8,9 @@ import { addCategorias } from '../../../stores/CreateRecipe/Actions/RecipeAction
 import { connect } from 'react-redux';
 import axios from "axios";
 import environment from "../../../constants/environment";
+import uuid from 'react-native-uuid';
+
+
 
 const AddCategoriasScreen = ({navigation,updateCategories}) => {
     const scrollViewRef = useRef();
@@ -33,6 +36,7 @@ const AddCategoriasScreen = ({navigation,updateCategories}) => {
 
 	const agregarCategoria = () => {
 	        const newCategoria = {
+                id: uuid.v4(),
 	            categoria:{},
 	            valido: false
 	        }
@@ -75,7 +79,13 @@ const AddCategoriasScreen = ({navigation,updateCategories}) => {
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {categorias.map((element,index) => (
-                    <Categoria element key={index} index={index} onChange={cambiarCategoria} onDelete={(index) => eliminarCategoria(index)} categorias={dbFilters.categorias}/>
+                    <Categoria 
+                    element={element} 
+                    key={element.id} 
+                    index={index} 
+                    onChange={(u,i) => cambiarCategoria(u,i)} 
+                    onDelete={(index) => eliminarCategoria(index)} 
+                    categorias={dbFilters.categorias}/>
                 ))}
                 <AddButton onPress={agregarCategoria}/>
             </ScrollView>

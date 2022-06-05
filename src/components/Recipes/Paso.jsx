@@ -1,8 +1,6 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground,Pressable} from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
-import {useState,useEffect} from 'react'
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
+import {useState} from 'react'
 
 const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
     const [number,setNumber] = useState(index+1);
@@ -20,14 +18,12 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
           });  
         
        if (!result.cancelled) {
-            console.log(result)
          setMedia([...media,result.uri]);
        }
      }
 
     const updateTitle = (newTitle) => {
         setTitulo(newTitle);
-        console.log(titulo)
         verificarValidez();
         updateChanges();
     }
@@ -46,6 +42,7 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
 
     const updateChanges = () => {
         const updatedObject = {
+            id: element.id,
             number: number,
             titulo: titulo,
             descripcion: descripcion,
@@ -83,7 +80,9 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
                             editable={!isViewMode}/>
             <ScrollView horizontal={true}>
                 {media?.map((mediaItem,index) => (
-                    <ImageBackground source={{uri: mediaItem ? mediaItem : null}}  style={styles.imgBox}>
+                    <ImageBackground 
+                    source={{uri: mediaItem ? mediaItem : null}}  
+                    style={styles.imgBox}>
                         {!isViewMode 
                         ? <TouchableOpacity onPress={() => removeImage(index)}>
                             <Image source={mediaItem ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>

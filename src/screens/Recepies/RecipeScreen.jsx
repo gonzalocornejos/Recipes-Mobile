@@ -26,7 +26,6 @@ const RecipeScreen = ({route, navigation}) => {
     useEffect(() => {
         axios.get(`${environment.API_URL}/recetas/${idRecipe}`)
         .then(recipeRes => {
-            console.log(recipeRes.data)
             setRecipe(recipeRes.data)
         })
         .catch(error => console.log(error))
@@ -74,7 +73,12 @@ const RecipeScreen = ({route, navigation}) => {
                         </Text>
                         {dbFilters 
                          ? recipe.ingredientes.map((ingrediente, index) => (
-                             <Ingrediente isViewMode={true} element={ingrediente} key={index + recipe.nombre} index={index} unidades={dbFilters.unidades}/>
+                             <Ingrediente 
+                                isViewMode={true} 
+                                element={ingrediente} 
+                                key={index + recipe.nombre} 
+                                index={index} 
+                                unidades={dbFilters.unidades}/>
                          ))
                          : <></>}
                     </View>

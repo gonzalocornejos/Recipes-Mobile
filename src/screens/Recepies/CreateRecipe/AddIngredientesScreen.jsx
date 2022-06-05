@@ -8,6 +8,8 @@ import { addIngredientes } from '../../../stores/CreateRecipe/Actions/RecipeActi
 import { connect } from 'react-redux';
 import axios from "axios";
 import environment from "../../../constants/environment";
+import uuid from 'react-native-uuid';
+
 
 const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
     const scrollViewRef = useRef();
@@ -28,6 +30,7 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
 
     const agregarIngrediente = () => {
         const newIngrediente = {
+            id: uuid.v4(),
             nombre:"",
             cantidad: "",
             unidad:{},
@@ -59,7 +62,6 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
 
     const onSiguiente = () => {
         updateIngredients(ingredientes);
-        navigation.navigate('AddCategorias')
     }
 
     return (
@@ -73,10 +75,15 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
             ref={scrollViewRef}
             onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {ingredientes.map((element,index) => (
-                    <Ingrediente element key={index} index={index} onChange={cambiarIngrediente} onDelete={eliminarIngrediente} unidades={dbFilters.unidades}/>
+                    <Ingrediente 
+                    element={element} 
+                    key={element.id} 
+                    index={index} 
+                    onChange={(u,i) => cambiarIngrediente(u,i)} 
+                    onDelete={(i) => eliminarIngrediente(i)} 
+                    unidades={dbFilters.unidades}/>
                 ))}
                 <AddButton onPress={agregarIngrediente}/>
-                {/*<AddButton onPress={eliminarIngrediente}/>*/}
             </ScrollView>
             <View style = {styles.mainButton}>
                 <MainButton

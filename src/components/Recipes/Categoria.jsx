@@ -23,16 +23,19 @@ const Categoria = ({element,index,onChange,onDelete,categorias}) => {
     const updateCat = (newCat) => {
         let newRCat
         categorias.forEach((categoria) => {
-            if (newCat !== null && newCat.value === categoria.id) {newRCat = categoria;}
+            if (newCat !== null && newCat === categoria.id) {
+                newRCat = categoria;
+            }
         })
-        setCategoria(newRCat);
+        setCategoria(newCat);
         verificarValidez();
-        updateChanges();
+        updateChanges(newRCat);
     } 
 
-    const updateChanges = () => {
+    const updateChanges = (newRCat) => {
         const updatedObject = {
-            categoria: categoria,
+            id: element.id,
+            categoria: newRCat,
             valido: valido
         }
         onChange(updatedObject,index)

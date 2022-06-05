@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView} from 'react-native';
+import {  View, Text, StyleSheet, Dimensions , ScrollView} from 'react-native';
 import {useState, useRef, useEffect } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
@@ -6,21 +6,20 @@ import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
 import { addPasos } from '../../../stores/CreateRecipe/Actions/RecipeActions';
 import { connect } from 'react-redux';
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
+import uuid from 'react-native-uuid';
+import axios from 'axios';
+import environment from '../../../constants/environment';
 
-const AddPasosScreen = ({navigation,updatePasos,recipe}) => {
+
+const AddPasosScreen = ({navigation,updatePasos,recipe, userName}) => {
     const scrollViewRef = useRef();
 
     const [pasos,setPasos] = useState([]);
 
-    useEffect(() => {
-        console.log(recipe);
-    }, [])
-
     const agregarPaso = () => {
         const numero = pasos ? pasos.length + 1 : 1
         const newPaso = {
+            id: uuid.v4(),
             number: {numero},
             titulo: "",
             descripcion: "",
@@ -52,7 +51,9 @@ const AddPasosScreen = ({navigation,updatePasos,recipe}) => {
 
     const onPublicar = () => {
         updatePasos(pasos);
-        console.log(recipe);
+        axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
+            .then(response => navigation.navigate("MyCreatedRecipes"))
+            .catch(error => console.log(error))
     }
 
     return (
@@ -66,7 +67,8 @@ const AddPasosScreen = ({navigation,updatePasos,recipe}) => {
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {pasos.map((element,index) => (
-                    <Paso element={element}  
+                    <Paso element={element}
+                            key={element.id}  
                             index={index} 
                             onChange={(updatedPaso,indice) => cambiarPaso(updatedPaso,indice)} 
                             onDelete={(indice) => eliminarPaso(indice)}/>
@@ -124,7 +126,8 @@ const AddPasosScreen = ({navigation,updatePasos,recipe}) => {
 });
 
 const mapStateToProps = state => ({
-    recipe: state.recipe
+    recipe: state.recipe,
+    userName: state.authentication.userName
   });
 
 const mapDispatchToProps = dispatch => {
