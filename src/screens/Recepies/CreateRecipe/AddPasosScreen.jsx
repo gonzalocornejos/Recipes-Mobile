@@ -6,6 +6,8 @@ import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
 import { addPasos } from '../../../stores/CreateRecipe/Actions/RecipeActions';
 import { connect } from 'react-redux';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 const AddPasosScreen = ({navigation,updatePasos,recipe}) => {
     const scrollViewRef = useRef();
@@ -64,7 +66,10 @@ const AddPasosScreen = ({navigation,updatePasos,recipe}) => {
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {pasos.map((element,index) => (
-                    <Paso element key={index+element.titulo+element.descripcion+element.media} index={index} onChange={cambiarPaso} onDelete={eliminarPaso}/>
+                    <Paso element={element}  
+                            index={index} 
+                            onChange={(updatedPaso,indice) => cambiarPaso(updatedPaso,indice)} 
+                            onDelete={(indice) => eliminarPaso(indice)}/>
                 ))}
                 <AddButton onPress={agregarPaso}/>
             </ScrollView>

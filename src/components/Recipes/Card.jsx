@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import environment from '../../constants/environment';
 import EmptyHearIcon from '../Application/Icons/EmptyHearIcon';
@@ -29,7 +29,7 @@ const Card = ({navigation, id, imageUri, recipeName = "[INDEFINIDO]", author = "
             style={{width: '100%', height: '100%'}}
             imageStyle={{ borderRadius: 10}}>
             <View style={{width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 10}} >
-                <View style={{position:'absolute', marginLeft: 310, marginTop: 10}}>
+                <View style={{position:'absolute', marginLeft: 310*widthFactor, marginTop: 10*heightFactor}}>
                     <TouchableOpacity onPress={() => toggleFavorite()}>
                         {own ? <></> : isFavoriteState ? <HeartIcon/> : <EmptyHearIcon/>}
                     </TouchableOpacity>                  
@@ -50,6 +50,9 @@ const Card = ({navigation, id, imageUri, recipeName = "[INDEFINIDO]", author = "
     );
 }
  
+const widthFactor = Dimensions.get('window').width/390;
+const heightFactor = Dimensions.get('window').height/844;
+
 const styles = StyleSheet.create({
     card: {
         display: 'flex',
