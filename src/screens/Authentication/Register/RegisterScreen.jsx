@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
         marginBottom: '30%'
     },
     buttons : {
+        top: 150,
         alignItems: 'center',
     }
 });
