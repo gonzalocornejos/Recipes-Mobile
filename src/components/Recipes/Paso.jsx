@@ -50,7 +50,9 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
             media: media,
             valido: valido
         }
-        onChange(updatedObject,index)
+        if(!isViewMode){
+            onChange(updatedObject,index)
+        }
     }
 
     const verificarValidez = () => {
