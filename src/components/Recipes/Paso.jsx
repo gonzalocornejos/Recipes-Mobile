@@ -1,6 +1,8 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground,Pressable} from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import {useState} from 'react'
+import uuid from 'react-native-uuid';
+
 
 const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
     const [number,setNumber] = useState(index+1);
@@ -19,6 +21,7 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
         
        if (!result.cancelled) {
          setMedia([...media,result.uri]);
+         updateChanges();
        }
      }
 
@@ -41,6 +44,7 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
     }
 
     const updateChanges = () => {
+        console.log("media paso:", media)
         const updatedObject = {
             id: element.id,
             number: number,
@@ -81,23 +85,22 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
             <ScrollView horizontal={true}>
                 {media?.map((mediaItem,index) => (
                     <ImageBackground 
+                    key={uuid.v4()}
                     source={{uri: mediaItem ? mediaItem : null}}  
-                    style={styles.imgBox}>
-                        {!isViewMode 
-                        ? <TouchableOpacity onPress={() => removeImage(index)}>
-                            <Image source={mediaItem ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
-                        </TouchableOpacity>
-                        : <></>}
+                    style={styles.imgBox}>                      
+                         <TouchableOpacity onPress={() => isViewMode ? {} : removeImage(index)}>
+                            <Image source={mediaItem && !isViewMode ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
+                        </TouchableOpacity>                  
                     </ImageBackground>
                 ))}
-                {(!isViewMode) 
-                ? <TouchableOpacity style={styles.imgBox}
+                 {!isViewMode 
+                 ? <TouchableOpacity style={styles.imgBox}
                                     onPress={selectFile}>
                         <ImageBackground source={require('../../../assets/images/ui/img.png')}
                                 style={{width: 38 * widthFactor, height: 40 * heightFactor}}>
-                        </ImageBackground>
-                </TouchableOpacity>
-                : <></>} 
+                        </ImageBackground>                    
+                </TouchableOpacity> 
+                : <></>}            
             </ScrollView>
         </Pressable>
         

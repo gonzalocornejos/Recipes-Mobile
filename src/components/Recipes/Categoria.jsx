@@ -42,7 +42,9 @@ const Categoria = ({element,index,onChange,onDelete,categorias}) => {
     }
 
     const verificarValidez = () => {
-        if (categoria!==null) setValido(true);
+        if (categoria && typeof(categoria) !== 'object'){ 
+            setValido(true);
+        }
     }
 
       return (

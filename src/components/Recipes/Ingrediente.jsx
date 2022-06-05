@@ -12,7 +12,6 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
     const [unidadesList,setUnidadesList] = useState([]);
 
     useEffect(()=>{
-        console.log("ingrediente", element.unidad)
         let data = [...unidadesList]
         unidades.forEach((unidad)=>{
             let newUnidad = {
@@ -58,7 +57,7 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
             id: element.id,
             nombre: nombre,
             cantidad: cantidad,
-            unidad: unidadNombre,
+            unidad: unidad,
             descripcion: descripcion,
             valido: valido
         }

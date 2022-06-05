@@ -56,11 +56,12 @@ const AddCategoriasScreen = ({navigation,updateCategories}) => {
 	    } 
     
     const verificarCategorias = () => {
-        let resp = true;
         categorias.forEach((categoria) => {
-            if(!categoria.valido) resp = false;
+            if(!categoria.valido){
+                return false;
+            }
         })
-        return resp;
+        return true;
     }
 
     const onSiguiente = () => {

@@ -33,6 +33,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName}) => {
         let pasosCopy = [...pasos];
         pasosCopy[index] = updatedPaso;
         setPasos(pasosCopy)
+        updatePasos(pasosCopy);
     }
 
     const verificarPasos = () => {
@@ -50,7 +51,6 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName}) => {
     }
 
     const onPublicar = () => {
-        updatePasos(pasos);
         axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
             .then(response => navigation.navigate("MyCreatedRecipes"))
             .catch(error => console.log(error))

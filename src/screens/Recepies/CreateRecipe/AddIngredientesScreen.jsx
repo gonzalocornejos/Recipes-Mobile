@@ -62,6 +62,7 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
 
     const onSiguiente = () => {
         updateIngredients(ingredientes);
+        navigation.navigate('AddCategorias')
     }
 
     return (
