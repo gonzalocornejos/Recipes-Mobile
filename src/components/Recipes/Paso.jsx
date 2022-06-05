@@ -2,7 +2,7 @@ import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet,
 import * as ImagePicker from 'expo-image-picker';
 import {useState,useEffect} from 'react'
 
-const Paso = ({element,index,onChange,onDelete}) => {
+const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
     const [number,setNumber] = useState(index+1);
     const [titulo,setTitulo] = useState(element.titulo);
     const [descripcion,setDescripcion] = useState(element.descripcion);
@@ -67,28 +67,34 @@ const Paso = ({element,index,onChange,onDelete}) => {
                     <Text style={styles.titleText}>Nombre</Text>
                     <TextInput value={titulo} 
                                 style={styles.titleInput}
-                                onChangeText={(title) => updateTitle(title)}></TextInput>
+                                onChangeText={(title) => updateTitle(title)}
+                                editable={!isViewMode}/>
                 </View>
             </View>
             <TextInput  style={styles.descInput}
                             placeholder='Descripcion'
                             value={descripcion}
                             multiline={true}
-                            onChangeText={(descripcion) => updateDescripcion(descripcion)}/>
+                            onChangeText={(descripcion) => updateDescripcion(descripcion)}
+                            editable={!isViewMode}/>
             <ScrollView horizontal={true}>
-                {media.map((media,index) => (
-                    <ImageBackground source={{uri: media.uri}} key={index} style={styles.imgBox}>
-                        <TouchableOpacity onPress={() => removeImage(index)}>
-                            <Image source={media ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
+                {images?.map((image,index) => (
+                    <ImageBackground source={{uri: image}} key={index} style={styles.imgBox}>
+                        {!isViewMode 
+                        ? <TouchableOpacity onPress={() => removeImage(index)}>
+                            <Image source={image ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
                         </TouchableOpacity>
+                        : <></>}
                     </ImageBackground>
                 ))}
-                <TouchableOpacity style={styles.imgBox}
+                {(!isViewMode) 
+                ? <TouchableOpacity style={styles.imgBox}
                                     onPress={selectFile}>
                         <ImageBackground source={require('../../../assets/images/ui/img.png')}
                                 style={{width: 38 * widthFactor, height: 40 * heightFactor}}>
                         </ImageBackground>
                 </TouchableOpacity>
+                : <></>} 
             </ScrollView>
         </Pressable>
         
@@ -102,11 +108,12 @@ const styles = StyleSheet.create({
         containter:{
             marginTop: 10*heightFactor,
             width: 345*widthFactor,
-            height: 224*heightFactor,
+            height: 'auto',
             borderRadius: 8,
             backgroundColor: '#FFFFFF',
             paddingTop: 7*heightFactor,
             paddingLeft: 15* widthFactor,
+            paddingBottom: 10 * widthFactor
         },
         paso:{
             width:'100%',
@@ -141,7 +148,8 @@ const styles = StyleSheet.create({
             width: 257*widthFactor,
             height: 20*heightFactor,
             textAlignVertical: 'bottom',
-            paddingBottom: 0
+            paddingBottom: 0,
+            color: 'black'
         },
         descInput:{
             width: 303*widthFactor,
@@ -154,6 +162,7 @@ const styles = StyleSheet.create({
             paddingLeft: 8*widthFactor,
             textAlign:'left',
             textAlignVertical: 'top',
+            color: 'black'
         },
         img: {
             width: '100%',

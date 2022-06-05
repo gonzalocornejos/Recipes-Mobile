@@ -8,13 +8,17 @@ import HeartIcon from '../Application/Icons/HeartIcon';
 import StarIcon from '../Application/Icons/StarIcon';
 
 
-const Card = ({id, imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]", score = 0.0, isFavorite, own = false, nickName}) => {
+const Card = ({navigation, id, imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]", score = 0.0, isFavorite, own = false, nickName}) => {
 
     const [isFavoriteState, setIsFavorite] = useState(isFavorite);
     const toggleFavorite = () => {
         axios.put(`${environment.API_URL}/recetas/favorito/${nickName}/${id}`)
             .then(_ => setIsFavorite(!isFavoriteState))
             .catch(error => Alert.alert("Ups!", "No se pudo cambiar de estado el favorito de esta receta"))
+    }
+
+    const pressCard = () => {
+        navigation.navigate('ViewRecipe', {idRecipe: id})
     }
 
     return ( 
@@ -24,7 +28,7 @@ const Card = ({id, imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]
             resizeMode="cover" 
             style={{width: '100%', height: '100%'}}
             imageStyle={{ borderRadius: 10}}>
-            <View style={{width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 10}}>
+            <View style={{width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 10}} >
                 <View style={{position:'absolute', marginLeft: 310, marginTop: 10}}>
                     <TouchableOpacity onPress={() => toggleFavorite()}>
                         {own ? <></> : isFavoriteState ? <HeartIcon/> : <EmptyHearIcon/>}
@@ -35,8 +39,10 @@ const Card = ({id, imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]
                     <Text style={styles.score}>{score}</Text>
                 </View>          
                 <View style={{width: '100%', marginTop: 95, position:'absolute'}}>
-                    <Text style={styles.recipeName}>{recipeName}</Text>  
-                    <Text style={styles.name}>{author}</Text>  
+                    <TouchableOpacity onPress={() => pressCard()}>
+                        <Text style={styles.recipeName}>{recipeName}</Text>  
+                        <Text style={styles.name}>{author}</Text>  
+                    </TouchableOpacity>               
                 </View>  
             </View>               
         </ImageBackground>

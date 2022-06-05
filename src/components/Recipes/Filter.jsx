@@ -77,7 +77,7 @@ const Filter = ({closeModal, setFilter, loadRecipes, onlyFavorites = false, nick
         //     sortOrder : orderBy ? orderBy.order :'DESC'
         // })
         // loadRecipes()
-        // closeModal()
+         closeModal()
     }
 
     const onCategoriesChange = () => {
