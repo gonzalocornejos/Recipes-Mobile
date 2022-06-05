@@ -1,6 +1,6 @@
 import { View, TextInput, StyleSheet } from "react-native"
 
-const Input = ({value, setValue, placeholder, secureTextEntry, width = '100%'}) => {  
+const Input = ({value, setValue, placeholder, secureTextEntry, width = '100%', keyboardType="default"}) => {  
     return (
         <View style={[styles.container, {width: width}]}>
             <TextInput 
@@ -9,6 +9,7 @@ const Input = ({value, setValue, placeholder, secureTextEntry, width = '100%'}) 
              onChangeText={setValue}
              placeholder={placeholder}
              secureTextEntry={secureTextEntry}
+             keyboardType={keyboardType}
             />
         </View>
     )

@@ -9,7 +9,7 @@ import { useIsFocused } from "@react-navigation/native";
 import Filter from "../../../components/Recipes/Filter";
 import { connect } from "react-redux";
 
-const MySavedRecipesScreen = ({nickName}) => {
+const MySavedRecipesScreen = ({navigation, nickName}) => {
     const isFocused = useIsFocused();
     const [recipes, setRecipes] = useState([])
     const [filter, setFilter] = useState({
@@ -49,8 +49,7 @@ const MySavedRecipesScreen = ({nickName}) => {
     return (
     <>
         { isModalOpen 
-        //  ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
-         ? <Filter/> 
+         ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
          : <View style={styles.inputDiv}>
                 <View style={{flexDirection:'row', flexWrap:'wrap'}}>
                     <Text style={styles.text}>Recetas Favoritas</Text>
@@ -83,6 +82,7 @@ const MySavedRecipesScreen = ({nickName}) => {
                             : recipes.map((recipe) => (
                                 <Card 
                                 key={recipe.recipeId}
+                                navigation={navigation}
                                 id={recipe.recipeId}
                                 author={recipe.nickName} 
                                 recipeName={recipe.nombre}

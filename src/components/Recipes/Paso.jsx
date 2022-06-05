@@ -1,14 +1,12 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView, ImageBackground,Pressable} from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import {useState} from 'react'
-import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
-import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
 
-const Paso = ({element,index,onChange,onDelete}) => {
+const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
     const [number,setNumber] = useState(index+1);
     const [title,setTitle] = useState(element.title);
     const [descripcion,setDescripcion] = useState(element.descripcion);
-    const [images,setImages] = useState(element.images ? images : []);
+    const [images,setImages] = useState(element.images ? element.images : []);
     const [valido,setValido] = useState(element.valido);
 
     const selectFile = async () => {       
@@ -20,7 +18,7 @@ const Paso = ({element,index,onChange,onDelete}) => {
           });  
  
        if (!result.cancelled) {
-         setImages([...images,result]);
+         setImages([...images,result.uri]);
          updateChanges();
        }
      }
@@ -58,31 +56,6 @@ const Paso = ({element,index,onChange,onDelete}) => {
         if (title!==null && descripcion!==null) setValido(true);
     }
 
-
-    const CONTAINER_wIDTH = 345*widthFactor;
-    const TRASHCAN_WIDTH = CONTAINER_wIDTH*0.2;
-
-    const translateX = useSharedValue(0);
-
-    const panGesture = useAnimatedGestureHandler({
-        onActive: (event,context) => {
-            translateX.value = context.startX + event.translationX;
-        },
-        onEnd: () => {
-            translateX.value = -0.2*CONTAINER_wIDTH;
-        },
-    });
-
-    const rStyle = useAnimatedStyle(() => {
-        return {
-            transform: [
-             {
-                translateX: translateX.value,
-             },
-            ],
-        }
-    });
-
     return (
         <Pressable onLongPress={()=>onDelete(number-1)} style={styles.containter}>
             <View style={{flexDirection:'row', alignItems:'center'}}>
@@ -93,28 +66,34 @@ const Paso = ({element,index,onChange,onDelete}) => {
                     <Text style={styles.titleText}>Nombre</Text>
                     <TextInput value={title} 
                                 style={styles.titleInput}
-                                onChangeText={(title) => updateTitle(title)}></TextInput>
+                                onChangeText={(title) => updateTitle(title)}
+                                editable={!isViewMode}/>
                 </View>
             </View>
             <TextInput  style={styles.descInput}
                             placeholder='Descripcion'
                             value={descripcion}
                             multiline={true}
-                            onChangeText={(descripcion) => updateDescripcion(descripcion)}/>
+                            onChangeText={(descripcion) => updateDescripcion(descripcion)}
+                            editable={!isViewMode}/>
             <ScrollView horizontal={true}>
-                {images.map((image,index) => (
-                    <ImageBackground source={{uri: image.uri}} key={index} style={styles.imgBox}>
-                        <TouchableOpacity onPress={() => removeImage(index)}>
+                {images?.map((image,index) => (
+                    <ImageBackground source={{uri: image}} key={index} style={styles.imgBox}>
+                        {!isViewMode 
+                        ? <TouchableOpacity onPress={() => removeImage(index)}>
                             <Image source={image ? require('../../../assets/images/ui/close.png') : null} style={styles.cross}/>
                         </TouchableOpacity>
+                        : <></>}
                     </ImageBackground>
                 ))}
-                <TouchableOpacity style={styles.imgBox}
+                {(!isViewMode) 
+                ? <TouchableOpacity style={styles.imgBox}
                                     onPress={selectFile}>
                         <ImageBackground source={require('../../../assets/images/ui/img.png')}
                                 style={{width: 38 * widthFactor, height: 40 * heightFactor}}>
                         </ImageBackground>
                 </TouchableOpacity>
+                : <></>} 
             </ScrollView>
         </Pressable>
         
@@ -128,11 +107,12 @@ const styles = StyleSheet.create({
         containter:{
             marginTop: 10*heightFactor,
             width: 345*widthFactor,
-            height: 224*heightFactor,
+            height: 'auto',
             borderRadius: 8,
             backgroundColor: '#FFFFFF',
             paddingTop: 7*heightFactor,
             paddingLeft: 15* widthFactor,
+            paddingBottom: 10 * widthFactor
         },
         paso:{
             width:'100%',
@@ -167,7 +147,8 @@ const styles = StyleSheet.create({
             width: 257*widthFactor,
             height: 20*heightFactor,
             textAlignVertical: 'bottom',
-            paddingBottom: 0
+            paddingBottom: 0,
+            color: 'black'
         },
         descInput:{
             width: 303*widthFactor,
@@ -180,6 +161,7 @@ const styles = StyleSheet.create({
             paddingLeft: 8*widthFactor,
             textAlign:'left',
             textAlignVertical: 'top',
+            color: 'black'
         },
         img: {
             width: '100%',

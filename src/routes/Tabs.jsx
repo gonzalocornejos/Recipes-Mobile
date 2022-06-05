@@ -2,9 +2,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, Image, StyleSheet } from "react-native";
 
 // Screens
-import LoginScreen from "../screens/Authentication/Login/LoginScreen";
-import RegisterScreen from "../screens/Authentication/Register/RegisterScreen";
-
 import HomeScreen from "../screens/Home/HomeScreen";
 import MyCreatedRecipesScreen from "../screens/MyRecepies/MyCretedRecipes/MyCreatedRecipesScreen";
 import MySavedRecipesScreen from "../screens/MyRecepies/MySavedRecipes/MySavedRecipesScreen";
@@ -12,6 +9,7 @@ import CreateRecipeScreen from "../screens/Recepies/CreateRecipe/CreateRecipeScr
 import AddPasosScreen from "../screens/Recepies/CreateRecipe/AddPasosScreen.jsx";
 import AddIngredientesScreen from "../screens/Recepies/CreateRecipe/AddIngredientesScreen.jsx";
 import AddCategoriasScreen from "../screens/Recepies/CreateRecipe/AddCategoriasScreen.jsx";
+import RecipeScreen from "../screens/Recepies/RecipeScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -109,6 +107,14 @@ const Tabs = () => {
                         <View style={{width:0, height:0}}></View>
                     ),
                     tabBarVisible:false //hide tab bar on this screen
+                }}/>
+
+            <Tab.Screen name="ViewRecipe" component={RecipeScreen} options={{
+                    headerShown: false, 
+                    tabBarButton: () => (
+                        <View style={{width:0, height:0}}></View>
+                    ),
+                    tabBarVisible:false
                 }}/>
         </Tab.Navigator>
     );

@@ -62,7 +62,6 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
     }
 
     const onSiguiente = () => {
-        console.log('entro')
         updateIngredients(ingredientes);
         navigation.navigate('AddCategorias')
     }

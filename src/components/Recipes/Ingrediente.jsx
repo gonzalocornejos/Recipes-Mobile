@@ -1,11 +1,8 @@
 import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, Pressable} from 'react-native'
 import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
-import {PanGestureHandler,GestureHandlerRootView} from 'react-native-gesture-handler';
-import Animated, {useAnimatedGestureHandler,useAnimatedStyle,useSharedValue} from 'react-native-reanimated'
-import BackArrow from '../../components/Application/Icons/BackArrow';
 
-const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
+const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = false}) => {
     const [name,setName] = useState(element.name);
     const [cant,setCant] = useState(element.cant);
     const [unit,setUnidad] = useState(element.unit);
@@ -18,7 +15,7 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
         unidades.forEach((unidad)=>{
             let newUnidad = {
                 label: unidad.item,
-                value: unidad.id
+                value: unidad.item
             }
             data.push(newUnidad);
         })
@@ -59,7 +56,9 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
             desc: desc,
             valido: valido
         }
-        onChange(updatedObject,index)
+        if(!isViewMode){
+            onChange(updatedObject,index)
+        }
     }
 
     const verificarValidez = () => {
@@ -73,7 +72,8 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
                     <Text style={styles.nameText}>Nombre</Text>
                     <TextInput value={name} 
                                 style={styles.nameInput}
-                                onChangeText={(name) => updateName(name)}/>
+                                onChangeText={(name) => updateName(name)}
+                                editable={!isViewMode}/>
                 </View>
                 <View style={{paddingLeft:24*widthFactor, flexDirection:'column'}}>
                     <Text style={styles.cantText}>Cantidad</Text>
@@ -92,11 +92,14 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
                         Icon={() => {return <Image source={require('../../../assets/images/ui/dropDownArrow.png')}/>}}/>
                 </View>
             </View>
-            <TextInput  style={styles.descInput}
-                            placeholder='Descripcion'
+            {(desc || !isViewMode) 
+                ? <TextInput style={styles.descInput}
+                            placeholder={'Descripcion'}
                             value={desc}
                             multiline={true}
-                            onChangeText={(desc) => updateDesc(desc)}/>
+                            onChangeText={(desc) => updateDesc(desc)}
+                            editable={!isViewMode}/>
+                : <></>}
             
         </Pressable>
         
@@ -110,11 +113,12 @@ const styles = StyleSheet.create({
         containter:{
             marginTop: 10*heightFactor,
             width: 345*widthFactor,
-            height: 154*heightFactor,
+            height: 'auto',
             borderRadius: 8,
             backgroundColor: '#FFFFFF',
             paddingTop: 7*heightFactor,
             paddingLeft: 15* widthFactor,
+            paddingBottom: 15* widthFactor
         },
         ingrediente:{
             width:'100%',
@@ -140,7 +144,8 @@ const styles = StyleSheet.create({
             borderBottomColor: '#000000',
             borderStyle: 'solid',
             textAlignVertical: 'bottom',
-            paddingBottom: 0
+            paddingBottom: 0,
+            color: 'black'
         },
         cantText:{
             width: 53.81*widthFactor,
@@ -172,6 +177,7 @@ const styles = StyleSheet.create({
             paddingLeft: 8*widthFactor,
             textAlign:'left',
             textAlignVertical: 'top',
+            color: 'black'
         },
         unidadText:{
             width: 53.81*widthFactor,

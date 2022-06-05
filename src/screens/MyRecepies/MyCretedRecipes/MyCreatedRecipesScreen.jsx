@@ -11,7 +11,7 @@ import environment from "../../../constants/environment";
 import { useIsFocused } from "@react-navigation/native";
 import Filter from "../../../components/Recipes/Filter";
 
-const MyCreatedRecipesScreen = ({logout, nickName}) => {
+const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
     const isFocused = useIsFocused();
     const [recipes, setRecipes] = useState([])
     const [filter, setFilter] = useState({
@@ -52,8 +52,7 @@ const MyCreatedRecipesScreen = ({logout, nickName}) => {
     return (
         <>
         { isModalOpen 
-            // ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
-            ? <Filter/> 
+            ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
             : 
             <View style={styles.inputContainer}>
                 <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'space-between'}}>
@@ -90,6 +89,7 @@ const MyCreatedRecipesScreen = ({logout, nickName}) => {
                                 : recipes.map((recipe) => (
                                     <Card 
                                     own
+                                    navigation={navigation}
                                     key={recipe.recipeId}
                                     id={recipe.recipeId}
                                     author={recipe.nickName} 
