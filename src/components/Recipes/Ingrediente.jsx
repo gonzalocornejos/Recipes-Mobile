@@ -1,8 +1,8 @@
-import { View, Text, Image, TextInput, Dimensions, StyleSheet, Pressable} from 'react-native'
+import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet, Pressable} from 'react-native'
 import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
 
-const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
+const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = false}) => {
     const [nombre,setNombre] = useState(element.nombre);
     const [cantidad,setCantidad] = useState(element.cantidad);
     const [unidad,setUnidad] = useState(element.unidad);
@@ -92,8 +92,9 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades}) => {
                         Icon={() => {return <Image source={require('../../../assets/images/ui/dropDownArrow.png')}/>}}/>
                 </View>
             </View>
-            <TextInput  style={styles.descInput}
-                            placeholder='Descripcion'
+            {(descripcion || !isViewMode) 
+                ? <TextInput style={styles.descInput}
+                            placeholder={'Descripcion'}
                             value={descripcion}
                             multiline={true}
                             onChangeText={(desc) => updateDesc(desc)}
