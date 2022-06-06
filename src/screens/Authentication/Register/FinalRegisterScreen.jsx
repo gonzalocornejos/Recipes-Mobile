@@ -6,19 +6,21 @@ import SecondaryButton from "../../../components/Application/Components/Secondar
 import axios from "axios";
 import environment from "../../../constants/environment";
 
-const RegisterScreen = ({navigation}) => {
-
+const FinalRegisterScreen = ({route, navigation}) => {
+    const {email, alias} = route.params;
     /* Pasar a formulario */
-    const [email, setEmail] = useState();
-    const [alias, setAlias] = useState();
+    const [contrasena, setContrasena] = useState();
+    const [repiteContrasena, setRepitaContrasena] = useState();
 
     const onContinuePressed = () => {
-        axios.post(`${environment.API_URL}/usuarios/chequear-primer-paso-registro`, {
+        axios.post(`${environment.API_URL}/usuarios/registrarse`, {
             email: email,
-            alias: alias
+            alias: alias,
+            contraseña: contrasena,
+            contraseñaRepetida: repiteContrasena
         })
-        .then(res => navigation.navigate("FinalRegister", {email: email, alias: alias}))
-        .catch(error => Alert.alert("Atención!","Alias o email ya en uso"))
+        .then(res => navigation.navigate("Login"))
+        .catch(error => Alert.alert("Atención!","Las contraseñas no coinciden"))
     }
 
     const onBackPressed = () => {
@@ -40,23 +42,25 @@ const RegisterScreen = ({navigation}) => {
        <View style={styles.input}>
            <Input 
            style={styles.input}
-           placeholder="Email" 
-           value={email} 
-           setValue={setEmail}
+           placeholder="Contraseña" 
+           value={contrasena} 
+           setValue={setContrasena}
+           secureTextEntry
            />   
        <Input 
            style={styles.input}
-           placeholder="Alias" 
-           value={alias} 
-           setValue={setAlias}        
+           placeholder="Repita Contraseña" 
+           value={repiteContrasena} 
+           setValue={setRepitaContrasena}
+           secureTextEntry 
            />   
        </View>
        
        <View style={styles.buttons}>
            <MainButton
-               value="CONTINUAR"
+               value="CREAR CUENTA"
                onPress={onContinuePressed}
-               active={email && alias}
+               active={contrasena && repiteContrasena}
            />   
            <SecondaryButton
                value="VOLVER"
@@ -103,4 +107,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default RegisterScreen;
+export default FinalRegisterScreen;

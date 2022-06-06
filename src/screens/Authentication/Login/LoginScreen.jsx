@@ -10,13 +10,10 @@ import { signIn } from "../../../stores/Authentication/Actions/AuthenticationAct
 
 const LoginScreen = ({navigation, login}) => {
 
-    /* Screen en progreso */
 
     /* Pasar a formulario */
     const [alias, setAlias] = useState('');
     const [password, setPassword] = useState('');
-
-    const [error, setError] = useState();
 
     const onLoginPressed = () => {
         axios.post(`${environment.API_URL}/usuarios/iniciar-sesion`, {
