@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { View, Image, StyleSheet, Text, Alert } from "react-native"
+import { View, Image, StyleSheet, Text, Alert, Pressable } from "react-native"
 import { connect } from "react-redux";
 import Input from "../../../components/Application/Components/Input";
 import MainButton from "../../../components/Application/Components/MainButton";
@@ -27,6 +27,10 @@ const LoginScreen = ({navigation, login}) => {
         navigation.navigate('Register')
     }
     
+    const onRecoverPasswordPressed = () => {
+        navigation.navigate('RecoverPassword')
+    }
+
     return (
         <View>
             <Image
@@ -53,9 +57,11 @@ const LoginScreen = ({navigation, login}) => {
                setValue={setPassword}
                secureTextEntry
                />   
-               <Text style={styles.forgot}>
-                   Olvidaste tu contraseña?
-               </Text>
+               <Pressable onPress={onRecoverPasswordPressed}>
+                    <Text style={styles.forgot}>
+                        Olvidaste tu contraseña?
+                    </Text>
+               </Pressable>
            </View>
            
            <View style={styles.buttons}>

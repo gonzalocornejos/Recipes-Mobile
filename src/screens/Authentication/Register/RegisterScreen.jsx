@@ -11,6 +11,7 @@ const RegisterScreen = ({navigation}) => {
     /* Pasar a formulario */
     const [email, setEmail] = useState();
     const [alias, setAlias] = useState();
+    const [error, setError] = useState('');
 
     const onContinuePressed = () => {
         axios.post(`${environment.API_URL}/usuarios/chequear-primer-paso-registro`, {
@@ -18,7 +19,9 @@ const RegisterScreen = ({navigation}) => {
             alias: alias
         })
         .then(res => navigation.navigate("FinalRegister", {email: email, alias: alias}))
-        .catch(error => Alert.alert("Atención!","Alias o email ya en uso"))
+        .catch(error => {
+            setError(error.response.data.errorMessage)
+        })
     }
 
     const onBackPressed = () => {
@@ -50,6 +53,7 @@ const RegisterScreen = ({navigation}) => {
            value={alias} 
            setValue={setAlias}        
            />   
+        <Text style={{color:'red'}}>{error}</Text>   
        </View>
        
        <View style={styles.buttons}>

@@ -24,7 +24,7 @@ const FinalRegisterScreen = ({route, navigation}) => {
     }
 
     const onBackPressed = () => {
-        navigation.navigate('Login')
+        navigation.navigate('Register')
     }
 
     return (

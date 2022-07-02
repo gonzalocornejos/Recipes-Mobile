@@ -52,7 +52,7 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
     return (
         <>
         { isModalOpen 
-            ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
+            ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} soloPropias={true} nickName={nickName}/>
             : 
             <View style={styles.inputContainer}>
                 <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'space-between'}}>
