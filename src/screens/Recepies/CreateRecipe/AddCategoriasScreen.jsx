@@ -12,27 +12,47 @@ import uuid from 'react-native-uuid';
 
 
 
-const AddCategoriasScreen = ({navigation,updateCategories}) => {
+const AddCategoriasScreen = ({navigation,updateCategories,recipe}) => {
     const scrollViewRef = useRef();
  
 	const [categorias,setCategorias] = useState([]);
 
-    const [dbFilters, setdbFilters] = useState({
-        unidades: [{
-            id: 0,
-            item: 'Cargando...'
-        }],
-        categorias: [{
-            id: 0,
-            item: 'Cargando...'
-        }]
-    })
+    const [dbFilters, setdbFilters] = useState()
 
     useEffect(()=> {
         axios.get(`${environment.API_URL}/recetas/filtros`)
-            .then(response => setdbFilters(response.data))
+            .then(response => {
+                setdbFilters(response.data)})
             .catch(error => console.log(error))
     },[])
+
+    useEffect(() => {
+        if(dbFilters)
+            agregarCategoriasInicial()
+    },[dbFilters])
+
+    const agregarCategoriasInicial = () => {
+        var categoriasCopy = []
+        recipe.categorias.forEach(categoria => {
+            var categoriaElement
+            dbFilters.categorias.forEach(element => {
+                if(element.item === categoria){
+                    categoriaElement = element
+                }
+            });
+            var element = {
+                label: categoriaElement.item,
+                value: categoriaElement.id
+            }
+            var newCategoria = {
+                id: uuid.v4(),
+                categoria: element,
+                valido: true
+            }
+            categoriasCopy.push(newCategoria)
+        });
+        setCategorias(categoriasCopy);
+    }
 
 	const agregarCategoria = () => {
 	        const newCategoria = {
@@ -81,9 +101,11 @@ const AddCategoriasScreen = ({navigation,updateCategories}) => {
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {categorias.map((element,index) => (
                     <Categoria 
-                    element={element} 
+                    element={element.categoria} 
                     key={element.id} 
                     index={index} 
+                    valido={element.valido}
+                    id = {element.id}
                     onChange={(u,i) => cambiarCategoria(u,i)} 
                     onDelete={(index) => eliminarCategoria(index)} 
                     categorias={dbFilters.categorias}/>

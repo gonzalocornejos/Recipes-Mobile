@@ -1,4 +1,4 @@
-import { ADD_CATEGORIES, ADD_GENERAL_INFO, ADD_INGREDIENTS, ADD_PASOS } from "../Constants";
+import { ADD_CATEGORIES, ADD_GENERAL_INFO, ADD_INGREDIENTS, ADD_PASOS, ADD_EVERYTHING, EMPTY, CREAR, EDITAR, SOBREESCRIBIR, CAMBIAR_CREAR,CAMBIAR_SOBREESCRIBIR,CAMBIAR_EDITAR } from "../Constants";
 
 const INITIAL_STATE = {
     nombre: undefined,
@@ -7,7 +7,8 @@ const INITIAL_STATE = {
     imagen: undefined,
     ingredientes: [],
     categorias: [],
-    pasos: []
+    pasos: [],
+    estado: CREAR
 };
 
 const RecipeReducer = (state = INITIAL_STATE, action) => {
@@ -34,6 +35,43 @@ const RecipeReducer = (state = INITIAL_STATE, action) => {
         return {
           ...state,
           pasos: action.pasos,
+        };
+      case EMPTY:
+        return {
+          ...state,
+          nombre: undefined,
+          descripcion: undefined,
+          porciones:  undefined,
+          imagen: undefined,
+          ingredientes: [],
+          categorias: [],
+          pasos: []
+        };
+      case ADD_EVERYTHING:
+        return {
+          ...state,
+          nombre: action.nombre,
+          descripcion: action.descripcion,
+          porciones: action.porciones,
+          imagen: action.imagen,
+          ingredientes: action.ingredientes,
+          categorias: action.categorias,
+          pasos: action.pasos,
+        };
+      case CAMBIAR_CREAR:
+        return{
+          ...state,
+          estado: action.estado
+        };
+      case CAMBIAR_EDITAR:
+        return {
+          ...state,
+          estado: action.estado
+        };
+      case CAMBIAR_SOBREESCRIBIR:
+        return {
+          ...state,
+          estado: action.estado
         };
       default: 
         return state;

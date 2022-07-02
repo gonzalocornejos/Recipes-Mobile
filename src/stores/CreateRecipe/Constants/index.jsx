@@ -1,4 +1,12 @@
 export const ADD_GENERAL_INFO = 'ADD_GENERAL_INFO';
 export const ADD_INGREDIENTS = 'ADD_INGREDIENTS';
 export const ADD_CATEGORIES = 'ADD_CATEGORIES' 
-export const ADD_PASOS = 'ADD_PASOS' 
+export const ADD_PASOS = 'ADD_PASOS';
+export const EMPTY = 'EMPTY';
+export const ADD_EVERYTHING = 'ADD_EVERYTHING';
+export const CREAR = "CREAR";
+export const EDITAR = "EDITAR";
+export const SOBREESCRIBIR = "SOBREESCRIBIR";
+export const CAMBIAR_CREAR = "CAMBIAR_CREAR";
+export const CAMBIAR_EDITAR = "CAMBIAR_EDITAR";
+export const CAMBIAR_SOBREESCRIBIR = "CAMBIAR_SOBREESCRIBIR"

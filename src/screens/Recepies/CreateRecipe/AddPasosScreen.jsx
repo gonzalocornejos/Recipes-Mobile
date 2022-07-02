@@ -4,17 +4,38 @@ import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
 import AddButton from '../../../components/Application/Components/AddButton';
 import BackArrow from '../../../components/Application/Icons/BackArrow';
-import { addPasos } from '../../../stores/CreateRecipe/Actions/RecipeActions';
+import { addPasos, empty, cambiarCrear } from '../../../stores/CreateRecipe/Actions/RecipeActions';
 import { connect } from 'react-redux';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
 import environment from '../../../constants/environment';
+import { CREAR,EDITAR,SOBREESCRIBIR} from "../../../stores/CreateRecipe/Constants/index";
 
 
-const AddPasosScreen = ({navigation,updatePasos,recipe, userName}) => {
+const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear}) => {
     const scrollViewRef = useRef();
 
     const [pasos,setPasos] = useState([]);
+
+    useEffect(()=>{
+        agregarPasosInicial()
+    },[])
+
+    const agregarPasosInicial = () => {
+        var pasosCopy = []
+        recipe.pasos.forEach(paso => {
+            const newPaso = {
+                id: uuid.v4(),
+                number:paso.number,
+                titulo: paso.titulo,
+                descripcion: paso.descripcion,
+                media: paso.media,
+                valido: true
+            }
+            pasosCopy.push(newPaso)
+        });
+        setPasos(pasosCopy);
+    }
 
     const agregarPaso = () => {
         const numero = pasos ? pasos.length + 1 : 1
@@ -51,9 +72,26 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName}) => {
     }
 
     const onPublicar = () => {
-        axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
-            .then(response => navigation.navigate("MyCreatedRecipes"))
-            .catch(error => console.log(error))
+        if (recipe.estado === CREAR){
+            axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
+            .then(response => {
+                empty();
+                navigation.navigate("MyCreatedRecipes")})
+            .catch(error => console.log(error));
+        } else if (recipe.estado === SOBREESCRIBIR){
+            axios.post(`${environment.API_URL}/recetas/sobreescribir/${userName}`, recipe)
+            .then(response => {
+                empty();
+                changeCrear(CREAR)
+                navigation.navigate("MyCreatedRecipes")})
+            .catch(error => console.log(error));
+        } else {
+            axios.post(`${environment.API_URL}/recetas/editar/${userName}`, recipe)
+            .then(response => {
+                empty();
+                navigation.navigate("MyCreatedRecipes")})
+            .catch(error => console.log(error));
+        }
     }
 
     return (
@@ -132,7 +170,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => {
     return {
-        updatePasos : (pasos) => dispatch(addPasos(pasos))
+        updatePasos : (pasos) => dispatch(addPasos(pasos)),
+        changeCrear: (estado) => dispatch(cambiarCrear(estado)),
     }
 };
 

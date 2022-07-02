@@ -14,19 +14,36 @@ import uuid from 'react-native-uuid';
 const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
     const scrollViewRef = useRef();
     const [ingredientes,setIngredientes] = useState([]);
-    const [dbFilters, setdbFilters] = useState({})
+    const [dbFilters, setdbFilters] = useState()
 
     useEffect(()=> {
-        setdbFilters({
-            unidades: [{
-                id: 0,
-                item: 'Cargando...'
-            }],
-        })
         axios.get(`${environment.API_URL}/recetas/filtros`)
-            .then(response => setdbFilters(response.data))
+            .then(response => 
+                {
+                setdbFilters(response.data)})
             .catch(error => console.log(error))
     },[])
+
+    useEffect(() => {
+        if(dbFilters)
+            agregarIngredientesInicial()
+    },[dbFilters])
+
+    const agregarIngredientesInicial = () => {
+        var ingredientesCopy = []
+        recipe.ingredientes.forEach(ingrediente => {
+            const newIngrediente = {
+                id: uuid.v4(),
+                nombre:ingrediente.nombre,
+                cantidad: ingrediente.cantidad,
+                unidad: ingrediente.unidad,
+                descripcion: ingrediente.descripcion,
+                valido: true
+            }
+            ingredientesCopy.push(newIngrediente)
+        });
+        setIngredientes(ingredientesCopy);
+    }
 
     const agregarIngrediente = () => {
         const newIngrediente = {

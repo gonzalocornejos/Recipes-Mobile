@@ -2,10 +2,10 @@ import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet} from 'reac
 import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
 
-const Categoria = ({element,index,onChange,onDelete,categorias}) => {
-    const [categoria,setCategoria] = useState(element.categoria)
+const Categoria = ({element,index,onChange,onDelete,categorias,valid,id}) => {
+    const [categoria,setCategoria] = useState(element)
     const [number,setNumber] = useState(index)
-    const [valido,setValido] = useState(element.valido)
+    const [valido,setValido] = useState(valid)
     const [categoriasList,setCategoriasList] = useState([]);
 
     useEffect(()=>{
@@ -18,6 +18,7 @@ const Categoria = ({element,index,onChange,onDelete,categorias}) => {
             data.push(newCategoria);
         })
         setCategoriasList(data)
+        console.log(categoria)
     },[])
 
     const updateCat = (newCat) => {
@@ -34,7 +35,7 @@ const Categoria = ({element,index,onChange,onDelete,categorias}) => {
 
     const updateChanges = (newRCat) => {
         const updatedObject = {
-            id: element.id,
+            id: id,
             categoria: newRCat,
             valido: valido
         }

@@ -7,8 +7,11 @@ import environment from '../../constants/environment';
 import Ingrediente from '../../components/Recipes/Ingrediente';
 import Input from '../../components/Application/Components/Input';
 import StarIcon from '../../components/Application/Icons/StarIcon';
+import { connect } from "react-redux";
+import {EDITAR} from "../../stores/CreateRecipe/Constants/index";
+import {addEverything, cambiarEditar} from "../../stores/CreateRecipe/Actions/RecipeActions";
 
-const RecipeScreen = ({route, navigation}) => {
+const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}) => {
     const {idRecipe} = route.params;
     const [recipe,setRecipe] = useState({
         imagen: '',
@@ -29,12 +32,18 @@ const RecipeScreen = ({route, navigation}) => {
             setRecipe(recipeRes.data)
         })
         .catch(error => console.log(error))
-
+        
         axios.get(`${environment.API_URL}/recetas/filtros`)
         .then(response => setdbFilters(response.data))
         .catch(error => console.log(error))
 
     }, [idRecipe])
+
+    const onEditar = () => {
+        changeEditar(EDITAR)
+        updateEverything(recipe.nombre,recipe.descripcion,recipe.porciones,recipe.imagen,recipe.ingredientes,recipe.categorias,recipe.pasos)
+        navigation.navigate("Create")
+    }
 
     return (
         <View>
@@ -43,6 +52,11 @@ const RecipeScreen = ({route, navigation}) => {
                     <BackArrow style={styles.arrowBtn}/>
                 </TouchableOpacity>
                 <Text style={styles.headerText}>{recipe.nombre}</Text>
+                {recipe.nombreUsuario === nickName ? 
+                <TouchableOpacity onPress={onEditar}>
+                    <Image source={require('../../../assets/images/ui/EditButton.png')} style={styles.edit}/>
+                </TouchableOpacity>
+                : <></>}
             </View>
             <View style={{left: 32*widthFactor}}>
             <SafeAreaView>
@@ -175,7 +189,25 @@ const styles = StyleSheet.create({
         textAlign:'left',
         textAlignVertical: 'top',
         backgroundColor: 'white'
+    },
+    edit:{
+        width: 31*widthFactor,
+        height: 31*heightFactor,
+        alignSelf: 'baseline',
+        marginTop: 10*heightFactor,
+        marginLeft: 35*widthFactor,
     }
 });
 
-export default RecipeScreen;
+const mapStateToProps = state => ({
+    nickName: state.authentication.userName
+});
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updateEverything : (nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos) => dispatch(addEverything(nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos)),
+        changeEditar: (estado) => dispatch(cambiarEditar(estado)),
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(RecipeScreen);

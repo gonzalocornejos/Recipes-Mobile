@@ -1,10 +1,10 @@
-import { Text, StyleSheet, Pressable } from "react-native"
+import { Text, StyleSheet, TouchableOpacity } from "react-native"
 
 const SecondaryButton = ({onPress, value}) => {    
     return (
-        <Pressable onPress={onPress} style={styles.container}>
+        <TouchableOpacity onPress={onPress} style={styles.container}>
             <Text style={styles.text}>{value}</Text>
-        </Pressable>
+        </TouchableOpacity>
     )
 }
 
