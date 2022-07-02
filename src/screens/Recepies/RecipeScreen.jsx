@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView, TextInput, SafeAreaView} from 'react-native';
+import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView, TextInput, SafeAreaView, Alert} from 'react-native';
 import {useState, useEffect } from 'react'
 import Paso from '../../components/Recipes/Paso';
 import BackArrow from '../../components/Application/Icons/BackArrow';
@@ -7,8 +7,10 @@ import environment from '../../constants/environment';
 import Ingrediente from '../../components/Recipes/Ingrediente';
 import Input from '../../components/Application/Components/Input';
 import StarIcon from '../../components/Application/Icons/StarIcon';
+import { Rating } from 'react-native-ratings';
+import { connect } from 'react-redux';
 
-const RecipeScreen = ({route, navigation}) => {
+const RecipeScreen = ({route, navigation, user}) => {
     const {idRecipe} = route.params;
     const [recipe,setRecipe] = useState({
         imagen: '',
@@ -22,6 +24,7 @@ const RecipeScreen = ({route, navigation}) => {
         porciones: 0
     });
     const [dbFilters, setdbFilters] = useState(undefined)
+    const [puntuacionUsuario, setPuntuacionUsuario] = useState(0);
 
     useEffect(() => {
         axios.get(`${environment.API_URL}/recetas/${idRecipe}`)
@@ -34,7 +37,18 @@ const RecipeScreen = ({route, navigation}) => {
         .then(response => setdbFilters(response.data))
         .catch(error => console.log(error))
 
+        axios.get(`${environment.API_URL}/recetas/puntaje/${user}/${idRecipe}`)
+        .then(res => setPuntuacionUsuario(res.data))
+        .catch(error => setPuntuacionUsuario(0))
+
     }, [idRecipe])
+
+
+    const ratingCompleted = (rating) => {
+        axios.post(`${environment.API_URL}/recetas/puntuar/${idRecipe}/${user}/${rating}`)
+        .then(res => Alert.alert("Atención", "Haz puntuado la receta, recuerda que puedes cambiar tu opnion"))
+        .catch(error => Alert.alert("Atención", "No se ha podido puntuar la receta"))
+    }
 
     return (
         <View>
@@ -99,14 +113,21 @@ const RecipeScreen = ({route, navigation}) => {
                         />
                     </View>   
                     <View style={styles.container}>
-                        <Text style={{fontSize: 20 * heightFactor, fontWeight:'500', width:'100%', textAlign:'center'}}>Calificar Recetas</Text> 
-                        <View style={[styles.container, {justifyContent: 'space-around', marginTop: 25 * heightFactor}]}>
-                            <StarIcon isActive style={{transform: [{ scale: 2 }]}}/>   
-                            <StarIcon isActive style={{transform: [{ scale: 2 }]}}/>   
-                            <StarIcon isActive style={{transform: [{ scale: 2 }]}}/>   
-                            <StarIcon isActive style={{transform: [{ scale: 2 }]}}/>   
-                            <StarIcon isActive={false} style={{transform: [{ scale: 2 }]}}/>   
-                        </View>                      
+                        {
+                            user === recipe.nombreUsuario 
+                            ? <></>
+                            : <><Text style={{fontSize: 20 * heightFactor, fontWeight:'500', width:'100%', textAlign:'center'}}>Calificar Receta</Text> 
+                                <Rating
+                                    key={idRecipe}
+                                    type='custom'
+                                    ratingBackgroundColor='#F2F2F2'
+                                    imageSize={40}
+                                    startingValue={puntuacionUsuario}
+                                    onFinishRating={(raiting) => ratingCompleted(raiting)}
+                                    style={{ marginLeft: 60, marginTop: 20 }}
+                                />  
+                                </>
+                        }  
                     </View> 
                 </ScrollView>  
             </SafeAreaView>       
@@ -178,4 +199,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default RecipeScreen;
+const mapStateToProps = state => ({
+    user: state.authentication.userName
+});
+
+export default connect(mapStateToProps)(RecipeScreen);
