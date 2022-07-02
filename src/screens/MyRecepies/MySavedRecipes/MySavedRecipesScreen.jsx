@@ -32,7 +32,7 @@ const MySavedRecipesScreen = ({navigation, nickName}) => {
 
     useEffect(() => {
         loadRecipes();
-    }, [isFocused])
+    }, [isFocused, filter])
 
     const loadRecipes = () => {
         setRefreshing(true);
@@ -49,7 +49,7 @@ const MySavedRecipesScreen = ({navigation, nickName}) => {
     return (
     <>
         { isModalOpen 
-         ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
+         ? <Filter closeModal={toggleModal} setFilter={(filter) => setFilter(filter)} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
          : <View style={styles.inputDiv}>
                 <View style={{flexDirection:'row', flexWrap:'wrap'}}>
                     <Text style={styles.text}>Recetas Favoritas</Text>

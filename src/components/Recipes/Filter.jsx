@@ -35,7 +35,7 @@ const orderByFilter = [
     }
 ]
 
-const Filter = ({closeModal, setFilter, loadRecipes, onlyFavorites = false, nickName}) => {  
+const Filter = ({closeModal, setFilter, loadRecipes, soloPropias = false, onlyFavorites = false, nickName}) => {  
     const [selectedCategories, setSelectedCategories] = useState([])
     const [selectedIngredientes, setSelectedIngredientes] = useState([])
     const [selectedIngredientesExcluidos, setSelectedIngredientesExcluidos] = useState([])
@@ -61,23 +61,23 @@ const Filter = ({closeModal, setFilter, loadRecipes, onlyFavorites = false, nick
 
 
     const actionFilter = () => {
-        // setFilter({
-        //     filter : {
-        //         nombre : '',
-        //         tipoPlatos : selectedCategories,
-        //         ingredientes : selectedIngredientes,
-        //         ingredientesExcluidos: selectedIngredientesExcluidos,
-        //         nickName: alias,
-        //         usuarioLogueado : nickName,
-        //         soloFavoritos : onlyFavorites
-        //     },
-        //     pageNumber : 1,
-        //     pageSize : 20,
-        //     sortField : orderBy ? orderBy.name : 'RecipeId',
-        //     sortOrder : orderBy ? orderBy.order :'DESC'
-        // })
-        // loadRecipes()
-         closeModal()
+        setFilter({
+            filter : {
+                nombre : '',
+                tipoPlatos : selectedCategories.map(c => c.item),
+                ingredientes : selectedIngredientes.map(c => c.item),
+                ingredientesExcluidos: selectedIngredientesExcluidos.map(c => c.item),
+                nickName: alias,
+                usuarioLogueado : nickName,
+                soloFavoritos : onlyFavorites,
+                soloPropias : soloPropias
+            },
+            pageNumber : 1,
+            pageSize : 20,
+            sortField : Object.keys(orderBy).length !== 0 ? orderBy.name : 'RecipeId',
+            sortOrder : Object.keys(orderBy).length !== 0 ? orderBy.order :'DESC'
+        })
+        closeModal()
     }
 
     const onCategoriesChange = () => {
@@ -195,7 +195,6 @@ const heightFactor = Dimensions.get('window').height/844;
 const styles = StyleSheet.create({
     Div : {
         width: '100%',
-        height: '80%',
         padding: 20,
         paddingTop: StatusBar.currentHeight
     },
@@ -223,10 +222,10 @@ const styles = StyleSheet.create({
         marginBottom: '5%'
     },
     title: {       
-        fontSize: 25,
+        fontSize: 15,
         fontFamily: 'Roboto-Regular',
         fontWeight: 'bold'
-    }
+    },
 });
 
 

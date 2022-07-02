@@ -1,8 +1,8 @@
 import { View, TextInput, StyleSheet } from "react-native"
 
-const Input = ({value, setValue, placeholder, secureTextEntry, width = '100%', keyboardType="default"}) => {  
+const Input = ({value, setValue, placeholder, secureTextEntry, width = '100%', height = 'auto', keyboardType="default"}) => {  
     return (
-        <View style={[styles.container, {width: width}]}>
+        <View style={[styles.container, {width: width, height: height}]}>
             <TextInput 
              style={styles.input}
              value={value}
@@ -18,7 +18,6 @@ const Input = ({value, setValue, placeholder, secureTextEntry, width = '100%', k
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'rgba(196, 196, 196, .2)',
-        
 
         borderColor: '#E8E8E8',
         borderWidth: 1,

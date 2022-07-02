@@ -33,7 +33,7 @@ const HomeScreen = ({navigation, nickName}) => {
 
     useEffect(() => {
         loadRecipes();
-    }, [isFocused])
+    }, [isFocused, filter])
 
     const loadRecipes = () => {
         setRefreshing(true);
@@ -47,10 +47,14 @@ const HomeScreen = ({navigation, nickName}) => {
         setModalOpen(!isModalOpen)
     }
 
+    const setFilterFn = (param) => {
+        setFilter(param)
+    }
+
     return (
         <>
         { isModalOpen 
-            ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} onlyFavorites={true} nickName={nickName}/>
+            ? <Filter closeModal={toggleModal} setFilter={(filter) => setFilterFn(filter)} loadRecipes={loadRecipes} onlyFavorites={false} nickName={nickName}/>
             :
         <View style={styles.inputDiv}>
                 <View style={{flexDirection:'row', flexWrap:'wrap'}}>
@@ -79,7 +83,9 @@ const HomeScreen = ({navigation, nickName}) => {
                         }
                         showsVerticalScrollIndicator={false} 
                         contentContainerStyle={{paddingBottom: 30}}>
-                            {recipes.map((recipe) => (
+                            {recipes.length === 0 
+                                ? <Text>No se han encontrado recetas</Text>
+                                : recipes.map((recipe) => (
                                 <Card 
                                 navigation={navigation}
                                 key={recipe.recipeId.toString() + recipe.esFavorito.toString() }
