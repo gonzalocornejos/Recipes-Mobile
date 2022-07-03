@@ -37,10 +37,12 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
     })
     const [refreshing, setRefreshing] = useState(false);
     const [personalizatedRecipes, setPersonalizatedRecipes] = useState([]);
+    const [savedRecipes, setSavedRecipes] = useState([])
 
     useEffect(async () => {
         loadRecipes();
         await loadPersonalizatedRecipes();
+        await loadSavedRecipes();
         changeCrear(CREAR)
         vaciar()
     }, [isFocused, filter])
@@ -65,9 +67,26 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
         }
     }
 
+    const loadSavedRecipes = async () => {
+        try {
+            let savedRecipes = JSON.parse(await AsyncStorage.getItem('later-recipe')) || [];
+            setSavedRecipes(savedRecipes);
+        } catch (e) {
+            //error
+        }
+    }
+
     const filterRecipes = (value) => {
         let copyRecipe = [...recipes]
         setFilteredRecipes(copyRecipe.filter(r => r.nombre.startsWith(value)))
+    }
+
+    const onLogout = async () => {
+        const keys = await AsyncStorage.getAllKeys();
+        for(const key of keys){
+            await AsyncStorage.setItem(key, JSON.stringify([]))
+        }
+        logout()
     }
 
     return (
@@ -75,14 +94,14 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
             <View style={styles.inputContainer}>
                 <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'space-between'}}>
                     <Text style={styles.text}>Mis Recetas</Text>
-                    <TouchableOpacity  ableHighlight onPress={() => logout()} style={styles.logout}>
+                    <TouchableOpacity  ableHighlight onPress={() => onLogout()} style={styles.logout}>
                         <LogoutIcon />
                     </TouchableOpacity>
                 </View>    
                     <View style={{flexDirection:'row', flexWrap:'wrap'}}>
                         <Input
                             placeholder="Buscar"
-                            width="87%" 
+                            width="100%" 
                             setValue={(value) => filterRecipes(value)}
                         />                     
                     </View>
@@ -124,6 +143,22 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                                                 isFavorite={recipe.esFavorito} 
                                                 imageUri={recipe.imagen} 
                                                 data={recipe}/>
+                                    ))
+                                }
+                                {
+                                    savedRecipes.map((recipe) => (
+                                        <Card 
+                                                own
+                                                navigation={navigation}
+                                                key={uuid.v4()}
+                                                author={"PARA SUBIR"} 
+                                                recipeName={recipe.nombre}
+                                                score={recipe.calificacion}
+                                                isFavorite={recipe.esFavorito} 
+                                                imageUri={recipe.imagen} 
+                                                data={recipe}
+                                                esParaSubir={true}
+                                                estado={recipe.estado}/>
                                     ))
                                 }
                             </ScrollView>

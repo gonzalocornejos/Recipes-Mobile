@@ -34,7 +34,6 @@ const HomeScreen = ({navigation, nickName,changeCrear,vaciar}) => {
     const [isModalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
-        console.log("entre")
         loadRecipes();
         changeCrear(CREAR)
         vaciar()

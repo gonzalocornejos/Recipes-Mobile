@@ -95,7 +95,6 @@ const AddCategoriasScreen = ({navigation,updateCategories,recipe}) => {
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
                 {categorias.map((element,index) => {
-                    // console.log("element", element)
                     return <Categoria 
                         element={element.categoria} 
                         key={element.id} 
