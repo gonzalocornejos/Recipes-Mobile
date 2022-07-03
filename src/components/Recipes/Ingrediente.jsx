@@ -99,13 +99,17 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
                 </View>
                 <View style={{paddingLeft:24*widthFactor, flexDirection:'column'}}>
                     <Text style={styles.unidadText}>Unidad</Text>
-                    <RNPickerSelect
+                    {isViewMode ? 
+                        <Text style={styles.nameInput}>{unidades[parseInt(unidad)-1].item}</Text>
+                    :
+                        <RNPickerSelect
                         value={unidad}
                         style={pickerSelectStyles}
                         items={unidadesList}
                         onValueChange={(unit) => updateUnit(unit)}
                         useNativeAndroidPickerStyle={false}
                         Icon={() => {return <Image source={require('../../../assets/images/ui/dropDownArrow.png')}/>}}/>
+                    }
                 </View>
             </View>
             {(descripcion || !isViewMode) 

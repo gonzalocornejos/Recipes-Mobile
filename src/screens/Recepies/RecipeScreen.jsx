@@ -14,9 +14,10 @@ import {addEverything, cambiarEditar} from "../../stores/CreateRecipe/Actions/Re
 import EditIcon from '../../components/Application/Icons/EditIcon';
 import DeleteIcon from '../../components/Application/Icons/DeleteIcon';
 import uuid from 'react-native-uuid';
+import MainButton from '../../components/Application/Components/MainButton';
 
 
-const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}) => {
+const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything, esParaSubir = false, estado = undefined}) => {
     const {idRecipe, data} = route.params;
     const [recipe,setRecipe] = useState({
         imagen: '',
@@ -130,6 +131,29 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
           }
     }
 
+    const onPublicar = (estado) => {
+        if (estado === CREAR){
+            axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
+            .then(response => {
+                vaciar();
+                navigation.navigate("MyCreatedRecipes")})
+            .catch(error => console.log(error));
+        } else if (estado === SOBREESCRIBIR){
+            axios.post(`${environment.API_URL}/recetas/sobreescribir/${userName}`, recipe)
+            .then(response => {
+                vaciar();
+                changeCrear(CREAR)
+                navigation.navigate("MyCreatedRecipes")})
+            .catch(error => console.log(error));
+        } else {
+            axios.patch(`${environment.API_URL}/recetas/editar/${userName}/${recipe.id}`, recipe)
+            .then(response => {
+                vaciar();
+                navigation.navigate("MyCreatedRecipes")})
+            .catch(error => console.log(error));
+        }
+    }
+
     return (
         <View>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
@@ -233,6 +257,13 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                                 </TouchableOpacity>
                             </View> 
                         }  
+                        {
+                            esParaSubir ?
+                            <MainButton 
+                            value="PUBLICAR"
+                            onPress={onPublicar}/>
+                            : <></>
+                        }
                 </ScrollView>  
             </SafeAreaView>       
             </View>
