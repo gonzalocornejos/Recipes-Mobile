@@ -58,7 +58,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
 
     const onEditar = () => {
         changeEditar(EDITAR)
-        updateEverything(recipe.nombre,recipe.descripcion,recipe.porciones,recipe.imagen,recipe.ingredientes,recipe.categorias,recipe.pasos)
+        updateEverything(idRecipe,recipe.nombre,recipe.descripcion,recipe.porciones,recipe.imagen,recipe.ingredientes,recipe.categorias,recipe.pasos)
         navigation.navigate("Create")
     }
 
@@ -339,7 +339,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateEverything : (nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos) => dispatch(addEverything(nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos)),
+        updateEverything : (id,nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos) => dispatch(addEverything(id,nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos)),
         changeEditar: (estado) => dispatch(cambiarEditar(estado)),
     }
 };

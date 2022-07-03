@@ -89,7 +89,7 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
         changeEditar(EDITAR)
         axios.get(`${environment.API_URL}/recetas/${nickName}/${nombre}`)
         .then(recipeRes => {
-            updateEverything(recipeRes.data.nombre,recipeRes.data.descripcion,recipeRes.data.porciones,recipeRes.data.imagen,recipeRes.data.ingredientes,recipeRes.data.categorias,recipeRes.data.pasos)
+            updateEverything(recipeRes.data.id,recipeRes.data.nombre,recipeRes.data.descripcion,recipeRes.data.porciones,recipeRes.data.imagen,recipeRes.data.ingredientes,recipeRes.data.categorias,recipeRes.data.pasos)
             setNombre(recipeRes.data.nombre)
             setDescripcion(recipeRes.data.descripcion)
             setImage(recipeRes.data.imagen)
@@ -282,7 +282,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
     return {
         updateGeneralInfo : (nombre,descripcion,porciones,imagen) => dispatch(addGeneralInfo(nombre,descripcion,porciones,imagen)),
-        updateEverything : (nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos) => dispatch(addEverything(nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos)),
+        updateEverything : (id,nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos) => dispatch(addEverything(id,nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos)),
         changeCrear: (estado) => dispatch(cambiarCrear(estado)),
         changeEditar: (estado) => dispatch(cambiarEditar(estado)),
         changeSobreescribir: (estado) => dispatch(cambiarSobreescribir(estado))

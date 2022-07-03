@@ -31,9 +31,10 @@ export const addPasos= (pasos) => {
     }
 } 
 
-export const addEverything = (nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos) => {
+export const addEverything = (id,nombre, descripcion,porciones,imagen,ingredientes,categorias,pasos) => {
   return {
     type: ADD_EVERYTHING,
+    id: id,
     nombre: nombre,
     descripcion: descripcion,
     porciones: porciones,

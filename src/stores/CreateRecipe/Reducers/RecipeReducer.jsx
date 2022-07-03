@@ -1,6 +1,7 @@
 import { ADD_CATEGORIES, ADD_GENERAL_INFO, ADD_INGREDIENTS, ADD_PASOS, ADD_EVERYTHING, EMPTY, CREAR, EDITAR, SOBREESCRIBIR, CAMBIAR_CREAR,CAMBIAR_SOBREESCRIBIR,CAMBIAR_EDITAR } from "../Constants";
 
 const INITIAL_STATE = {
+    id: undefined,
     nombre: undefined,
     descripcion: undefined,
     porciones:  undefined,
@@ -50,6 +51,7 @@ const RecipeReducer = (state = INITIAL_STATE, action) => {
       case ADD_EVERYTHING:
         return {
           ...state,
+          id: action.id,
           nombre: action.nombre,
           descripcion: action.descripcion,
           porciones: action.porciones,

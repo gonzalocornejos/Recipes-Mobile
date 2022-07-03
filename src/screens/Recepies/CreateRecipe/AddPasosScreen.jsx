@@ -87,7 +87,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
                 navigation.navigate("MyCreatedRecipes")})
             .catch(error => console.log(error));
         } else {
-            axios.patch(`${environment.API_URL}/recetas/editar/${userName}`, recipe)
+            axios.patch(`${environment.API_URL}/recetas/editar/${userName}/${recipe.id}`, recipe)
             .then(response => {
                 vaciar();
                 navigation.navigate("MyCreatedRecipes")})
