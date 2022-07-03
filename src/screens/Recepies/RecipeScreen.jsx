@@ -26,7 +26,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
         ingredientes: [],
         pasos: [],
         calificacion: 0,
-        porciones: 0
+        porciones: '0'
     });
     const [dbFilters, setdbFilters] = useState(undefined)
     const [puntuacionUsuario, setPuntuacionUsuario] = useState(0);
@@ -51,10 +51,6 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
 
         setFactorConversion(1)
     }, [idRecipe])
-
-    useEffect(() => {
-        console.log(factorConversion)
-    },[factorConversion])
 
     const onEditar = () => {
         changeEditar(EDITAR)
@@ -132,7 +128,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                     </View>   
                     <View style={styles.categoryContainer}>
                         {recipe.categorias.map((categoria, index) => (
-                            <Text key={index} style={styles.category}>{categoria}</Text>
+                            <Text key={index} style={styles.category}>{categoria.item}</Text>
                         ))}                    
                     </View> 
                     <View style={styles.container}>
@@ -179,7 +175,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                                     type='custom'
                                     ratingBackgroundColor='#F2F2F2'
                                     imageSize={40}
-                                    startingValue={puntuacionUsuario}
+                                    startingValue={puntuacionUsuario ? puntuacionUsuario : '0'}
                                     onFinishRating={(raiting) => ratingCompleted(raiting)}
                                     style={{ marginLeft: 60, marginTop: 20 }}
                                 />  

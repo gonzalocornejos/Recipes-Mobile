@@ -31,13 +31,8 @@ const AddCategoriasScreen = ({navigation,updateCategories,recipe}) => {
             agregarCategoriasInicial()
     },[dbFilters])
 
-    useEffect(() => {
-        console.log(categorias)
-    },[categorias])
-
     const agregarCategoriasInicial = () => {
         var categoriasCopy = []
-        console.log(recipe.categorias)
         recipe.categorias.forEach(categoria => {
             const newCategoria = {
                 id: uuid.v4(),
@@ -59,10 +54,10 @@ const AddCategoriasScreen = ({navigation,updateCategories,recipe}) => {
 	    }
 	    
 	const cambiarCategoria = (updatedCategoria,index) => {
-	        let categoriasCopy = [...categorias];
-	        categoriasCopy[index] = updatedCategoria;
-	        setCategorias(categoriasCopy)
-	    }
+        let categoriasCopy = [...categorias];
+        categoriasCopy[index] = updatedCategoria;
+        setCategorias(categoriasCopy)
+    }
 
 	const eliminarCategoria = (index) => {
 	        let data = [...categorias];
@@ -94,17 +89,18 @@ const AddCategoriasScreen = ({navigation,updateCategories,recipe}) => {
                         contentContainerStyle={{flexDirection:'column', alignItems:'center'}}
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
-                {categorias.map((element,index) => (
-                    <Categoria 
-                    element={element.categoria} 
-                    key={element.id} 
-                    index={index} 
-                    valido={element.valido}
-                    id = {element.id}
-                    onChange={(u,i) => cambiarCategoria(u,i)} 
-                    onDelete={(index) => eliminarCategoria(index)} 
-                    categorias={dbFilters.categorias}/>
-                ))}
+                {categorias.map((element,index) => {
+                    // console.log("element", element)
+                    return <Categoria 
+                        element={element.categoria} 
+                        key={element.id} 
+                        index={index} 
+                        valido={element.valido}
+                        id = {element.id}
+                        onChange={(u,i) => cambiarCategoria(u,i)} 
+                        onDelete={(index) => eliminarCategoria(index)} 
+                        categorias={dbFilters.categorias}/>
+                    })}
                 <AddButton onPress={agregarCategoria}/>
             </ScrollView>
             <View style = {styles.mainButton}>

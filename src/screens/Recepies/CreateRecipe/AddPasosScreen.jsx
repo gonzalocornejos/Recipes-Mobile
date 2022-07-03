@@ -18,7 +18,6 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear}) 
     const [pasos,setPasos] = useState([]);
 
     useEffect(()=>{
-        console.log(recipe)
         agregarPasosInicial()
     },[])
 
@@ -87,7 +86,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear}) 
                 navigation.navigate("MyCreatedRecipes")})
             .catch(error => console.log(error));
         } else {
-            axios.post(`${environment.API_URL}/recetas/editar/${userName}`, recipe)
+            axios.patch(`${environment.API_URL}/recetas/editar/${userName}`, recipe)
             .then(response => {
                 empty();
                 navigation.navigate("MyCreatedRecipes")})

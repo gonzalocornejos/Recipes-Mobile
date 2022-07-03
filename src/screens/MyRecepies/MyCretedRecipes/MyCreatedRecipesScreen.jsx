@@ -35,7 +35,7 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
 
     useEffect(() => {
         loadRecipes();
-    }, [isFocused])
+    }, [isFocused, filter])
 
     const loadRecipes = () => {
         setRefreshing(true);
@@ -85,7 +85,7 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
                             showsVerticalScrollIndicator={false} 
                             contentContainerStyle={{paddingBottom: 30}}>
                                 {recipes.length === 0 
-                                ? <Text>No tienes recetas guardadas</Text>
+                                ? <Text>No se han encontrado recetas</Text>
                                 : recipes.map((recipe) => (
                                     <Card 
                                     own
