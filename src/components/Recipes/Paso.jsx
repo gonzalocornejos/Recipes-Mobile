@@ -44,7 +44,6 @@ const Paso = ({element,index,onChange,onDelete, isViewMode=false}) => {
     }
 
     const updateChanges = () => {
-        console.log("media paso:", media)
         const updatedObject = {
             id: element.id,
             number: number,

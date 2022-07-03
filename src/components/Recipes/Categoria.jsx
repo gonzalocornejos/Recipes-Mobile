@@ -3,7 +3,7 @@ import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
 
 const Categoria = ({element,index,onChange,onDelete,categorias,valid,id}) => {
-    const [categoria,setCategoria] = useState(element ? element : undefined)
+    const [categoria,setCategoria] = useState(element ? element.id : undefined)
     const [number,setNumber] = useState(index)
     const [valido,setValido] = useState(valid)
     const [categoriasList,setCategoriasList] = useState([]);
@@ -21,23 +21,35 @@ const Categoria = ({element,index,onChange,onDelete,categorias,valid,id}) => {
     },[])
 
     useEffect(() => {
-        let newRCat = undefined
-        categorias.forEach((categoria) => {
-            if (element !== null && element === categoria.item) {
-                newRCat = categoria;
-            }
-        })
-        setCategoria(newRCat);
+        if(element !== undefined){
+            let newRCat = undefined
+            categorias.forEach((categoria) => {
+                if (element !== null && element.id === categoria.id) {
+                    newRCat = categoria;
+                }
+            })
+            setCategoria(newRCat);
+        }     
     },[categorias])
 
     const updateCat = (newCat) => {
         let newRCat
-        categorias.forEach((categoria) => {
-            if (newCat !== null && newCat === categoria.id) {
-                newRCat = categoria;
-            }
-        })
-        setCategoria(newCat);
+        if(element != undefined){
+            categorias.forEach((categoria) => {
+                if (element !== null && element.id === categoria.id) {
+                    newRCat = categoria;
+                }
+            })
+            setCategoria(element.id);
+            
+        } else {
+            categorias.forEach((categoria) => {
+                if (newCat !== null && newCat === categoria.id) {
+                    newRCat = categoria;
+                }
+            })
+            setCategoria(newCat);
+        }       
         verificarValidez();
         updateChanges(newRCat);
     } 

@@ -64,7 +64,6 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
         .then(result => {
             if (result.data){
                 setNombreUsado(USADO_NUEVO);
-                console.log(recipe.estado)
                 if(recipe.estado !== CREAR) 
                     navigation.navigate('AddIngredientes')
             } else {
@@ -85,7 +84,6 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
 
     const onEditar = () => {
         changeEditar(EDITAR)
-        console.log(recipe.estado)
         axios.get(`${environment.API_URL}/recetas/${nickName}/${nombre}`)
         .then(recipeRes => {
             updateEverything(recipeRes.data.nombre,recipeRes.data.descripcion,recipeRes.data.porciones,recipeRes.data.imagen,recipeRes.data.ingredientes,recipeRes.data.categorias,recipeRes.data.pasos)
