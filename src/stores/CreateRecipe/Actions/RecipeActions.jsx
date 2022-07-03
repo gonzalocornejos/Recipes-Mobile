@@ -47,6 +47,13 @@ export const addEverything = (nombre, descripcion,porciones,imagen,ingredientes,
 export const empty = () => {
   return {
     type: EMPTY,
+    nombre: undefined,
+    descripcion: undefined,
+    porciones:  undefined,
+    imagen: undefined,
+    ingredientes: [],
+    categorias: [],
+    pasos: [],
   }
 }
 

@@ -12,9 +12,10 @@ import { useIsFocused } from "@react-navigation/native";
 import Filter from "../../../components/Recipes/Filter";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
+import {CREAR} from "../../../stores/CreateRecipe/Constants/index";
+import {cambiarCrear,empty} from "../../../stores/CreateRecipe/Actions/RecipeActions";
 
-
-const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
+const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear}) => {
     const isFocused = useIsFocused();
     const [recipes, setRecipes] = useState([])
     const [filter, setFilter] = useState({
@@ -40,6 +41,8 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
     useEffect(async () => {
         loadRecipes();
         await loadPersonalizatedRecipes();
+        changeCrear(CREAR)
+        vaciar()
     }, [isFocused, filter])
 
     const loadRecipes = () => {
@@ -164,7 +167,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => {
     return {
-      logout : () => dispatch(signOut())
+      logout : () => dispatch(signOut()),
+      changeCrear: (estado) => dispatch(cambiarCrear(estado)),
+      vaciar: () => dispatch(empty())
     }
 };
 

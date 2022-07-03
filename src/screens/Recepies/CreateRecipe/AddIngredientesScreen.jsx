@@ -9,9 +9,11 @@ import { connect } from 'react-redux';
 import axios from "axios";
 import environment from "../../../constants/environment";
 import uuid from 'react-native-uuid';
+import { useIsFocused } from "@react-navigation/native";
 
 
 const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
+    const isFocused = useIsFocused();
     const scrollViewRef = useRef();
     const [ingredientes,setIngredientes] = useState([]);
     const [dbFilters, setdbFilters] = useState()
@@ -23,6 +25,11 @@ const AddIngredientesScreen = ({navigation,updateIngredients,recipe}) => {
                 setdbFilters(response.data)})
             .catch(error => console.log(error))
     },[])
+
+    useEffect(() => {
+        if(dbFilters)
+            agregarIngredientesInicial()
+    },[isFocused])
 
     useEffect(() => {
         if(dbFilters)

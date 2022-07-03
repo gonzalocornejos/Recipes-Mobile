@@ -39,13 +39,13 @@ const RecipeReducer = (state = INITIAL_STATE, action) => {
       case EMPTY:
         return {
           ...state,
-          nombre: undefined,
-          descripcion: undefined,
-          porciones:  undefined,
-          imagen: undefined,
-          ingredientes: [],
-          categorias: [],
-          pasos: []
+          nombre: action.nombre,
+          descripcion: action.descripcion,
+          porciones: action.porciones,
+          imagen: action.imagen,
+          ingredientes: action.ingredientes,
+          categorias: action.categorias,
+          pasos: action.pasos,
         };
       case ADD_EVERYTHING:
         return {

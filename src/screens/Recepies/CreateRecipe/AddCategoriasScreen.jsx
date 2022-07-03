@@ -9,12 +9,12 @@ import { connect } from 'react-redux';
 import axios from "axios";
 import environment from "../../../constants/environment";
 import uuid from 'react-native-uuid';
-
+import { useIsFocused } from "@react-navigation/native";
 
 
 const AddCategoriasScreen = ({navigation,updateCategories,recipe}) => {
     const scrollViewRef = useRef();
- 
+    const isFocused = useIsFocused();
 	const [categorias,setCategorias] = useState([]);
 
     const [dbFilters, setdbFilters] = useState()
@@ -30,6 +30,11 @@ const AddCategoriasScreen = ({navigation,updateCategories,recipe}) => {
         if(dbFilters)
             agregarCategoriasInicial()
     },[dbFilters])
+
+    useEffect(() => {
+        if(dbFilters)
+            agregarCategoriasInicial()
+    },[isFocused])
 
     const agregarCategoriasInicial = () => {
         var categoriasCopy = []

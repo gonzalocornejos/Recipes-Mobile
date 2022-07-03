@@ -8,15 +8,17 @@ import { connect } from "react-redux";
 import { CREAR,EDITAR,SOBREESCRIBIR} from "../../../stores/CreateRecipe/Constants/index";
 import axios from 'axios';
 import environment from '../../../constants/environment';
+import { useIsFocused } from "@react-navigation/native";
 
 const USADO_NUEVO = "USADO_NUEVO"
 const USADO_VISTO = "USADO_VISTO"
 const NO_USADO = "NO_USADO"
 
 const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,updateEverything,changeCrear,changeEditar,changeSobreescribir}) => {
+    const isFocused = useIsFocused();
     const [nombre,setNombre] = useState();
     const [descripcion,setDescripcion] = useState();
-    const [porciones,setPorciones] = useState();
+    const [porciones,setPorciones] = useState("0");
     const [image , setImage] = useState();
     const [nombreUsado, setNombreUsado] = useState();
     const [mostrar, setMostrar] = useState(false);
@@ -27,8 +29,9 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
         setNombre(recipe.nombre)
         setDescripcion(recipe.descripcion)
         setImage(recipe.imagen)
-        setPorciones(recipe.porciones ? recipe.porciones.toString() : recipe.porciones)
-    },[])
+        setPorciones(recipe.porciones ? recipe.porciones.toString() : "0")
+        setMostrar(false)
+    },[isFocused])
     
     useEffect(() => {
         if(nombreUsado === USADO_NUEVO){
@@ -100,7 +103,7 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
         <KeyboardAvoidingView
             behavior= {Platform.OS === "ios" ? "padding" : "height"}
             style={{flex: 1}}> 
-            <PopUpUsedName visible={mostrar && !sobreescribir} onCancelar={onCancelar} onContinuar={() => onContinuar()} onEditar={onEditar}/>
+            <PopUpUsedName visible={mostrar && recipe.estado !== SOBREESCRIBIR && recipe.estado !== EDITAR} onCancelar={onCancelar} onContinuar={() => onContinuar()} onEditar={onEditar}/>
             <Text style={styles.titleText}>Informacion General</Text>
             <Text style={styles.imgText}>Foto principal</Text>
             <TouchableOpacity onPress={selectFile} style={styles.imgBox}>

@@ -10,16 +10,17 @@ import uuid from 'react-native-uuid';
 import axios from 'axios';
 import environment from '../../../constants/environment';
 import { CREAR,EDITAR,SOBREESCRIBIR} from "../../../stores/CreateRecipe/Constants/index";
-
+import { useIsFocused } from "@react-navigation/native";
 
 const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,vaciar}) => {
+    const isFocused = useIsFocused();
     const scrollViewRef = useRef();
 
     const [pasos,setPasos] = useState([]);
 
     useEffect(()=>{
         agregarPasosInicial()
-    },[])
+    },[isFocused])
 
     const agregarPasosInicial = () => {
         var pasosCopy = []
