@@ -10,6 +10,9 @@ import axios from "axios";
 import environment from "../../../constants/environment";
 import { useIsFocused } from "@react-navigation/native";
 import Filter from "../../../components/Recipes/Filter";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+
 
 const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
     const isFocused = useIsFocused();
@@ -32,9 +35,11 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
     })
     const [refreshing, setRefreshing] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
+    const [personalizatedRecipes, setPersonalizatedRecipes] = useState([]);
 
-    useEffect(() => {
+    useEffect(async () => {
         loadRecipes();
+        await loadPersonalizatedRecipes();
     }, [isFocused, filter])
 
     const loadRecipes = () => {
@@ -45,15 +50,21 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
             .finally(f => setRefreshing(false))     
     }
 
+    const loadPersonalizatedRecipes = async () => {
+        try {
+            let savedRecipes = JSON.parse(await AsyncStorage.getItem('personalizated-recipes')) || [];
+            setPersonalizatedRecipes(savedRecipes);
+        } catch (e) {
+            //error
+        }
+    }
+
     const toggleModal = () => {
         setModalOpen(!isModalOpen)
     }
 
     return (
         <>
-        { isModalOpen 
-            ? <Filter closeModal={toggleModal} setFilter={setFilter} loadRecipes={loadRecipes} soloPropias={true} nickName={nickName}/>
-            : 
             <View style={styles.inputContainer}>
                 <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'space-between'}}>
                     <Text style={styles.text}>Mis Recetas</Text>
@@ -98,11 +109,24 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName}) => {
                                     isFavorite={recipe.esFavorito} 
                                     imageUri={recipe.fotoFinal}/>
                                 ))} 
+                                {
+                                    personalizatedRecipes.map((recipe) => (
+                                        <Card 
+                                                own
+                                                navigation={navigation}
+                                                key={uuid.v4()}
+                                                author={"PERSONALIZADA"} 
+                                                recipeName={recipe.nombre}
+                                                score={recipe.calificacion}
+                                                isFavorite={recipe.esFavorito} 
+                                                imageUri={recipe.imagen} 
+                                                data={recipe}/>
+                                    ))
+                                }
                             </ScrollView>
                         </SafeAreaView>     
                     </View>  
-            </View> 
-        }      
+            </View>           
     </>      
     )
 }

@@ -18,7 +18,7 @@ const RecoverPasswordScreen = ({navigation}) => {
     }
 
     const onRegisterPressed = () => {
-        navigation.navigate('RecoverPassword')
+        navigation.navigate('Login')
     }
     
     return (

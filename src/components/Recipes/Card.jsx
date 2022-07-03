@@ -8,7 +8,7 @@ import HeartIcon from '../Application/Icons/HeartIcon';
 import StarIcon from '../Application/Icons/StarIcon';
 
 
-const Card = ({navigation, id, imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]", score = 0.0, isFavorite, own = false, nickName}) => {
+const Card = ({navigation, id = undefined, imageUri, recipeName = "[INDEFINIDO]", author = "[INDEFINIDO]", score = 0.0, isFavorite, own = false, nickName, data = undefined}) => {
 
     const [isFavoriteState, setIsFavorite] = useState(isFavorite);
     const toggleFavorite = () => {
@@ -18,7 +18,7 @@ const Card = ({navigation, id, imageUri, recipeName = "[INDEFINIDO]", author = "
     }
 
     const pressCard = () => {
-        navigation.navigate('ViewRecipe', {idRecipe: id})
+            navigation.navigate('ViewRecipe', {idRecipe: id, data})
     }
 
     return ( 

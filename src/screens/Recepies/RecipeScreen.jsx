@@ -1,4 +1,5 @@
 import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions , ScrollView, TextInput, SafeAreaView, Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useState, useEffect } from 'react'
 import Paso from '../../components/Recipes/Paso';
 import BackArrow from '../../components/Application/Icons/BackArrow';
@@ -6,17 +7,17 @@ import axios from 'axios';
 import environment from '../../constants/environment';
 import Ingrediente from '../../components/Recipes/Ingrediente';
 import Input from '../../components/Application/Components/Input';
-import StarIcon from '../../components/Application/Icons/StarIcon';
 import { Rating } from 'react-native-ratings';
 import { connect } from 'react-redux';
 import {EDITAR} from "../../stores/CreateRecipe/Constants/index";
 import {addEverything, cambiarEditar} from "../../stores/CreateRecipe/Actions/RecipeActions";
 import EditIcon from '../../components/Application/Icons/EditIcon';
 import DeleteIcon from '../../components/Application/Icons/DeleteIcon';
+import uuid from 'react-native-uuid';
 
 
 const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}) => {
-    const {idRecipe} = route.params;
+    const {idRecipe, data} = route.params;
     const [recipe,setRecipe] = useState({
         imagen: '',
         nombre : '',
@@ -30,26 +31,29 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
     });
     const [dbFilters, setdbFilters] = useState(undefined)
     const [puntuacionUsuario, setPuntuacionUsuario] = useState(0);
-    const [factorConversion, setFactorConversion] = useState();
+    const [factorConversion, setFactorConversion] = useState(1);
     const [porcionesOriginales, setPorcionesOriginales] = useState();
 
     useEffect(() => {
-        axios.get(`${environment.API_URL}/recetas/${idRecipe}`)
-        .then(recipeRes => {
-            setRecipe(recipeRes.data)
-            setPorcionesOriginales(recipeRes.data.porciones)
-        })
-        .catch(error => console.log(error))
-        
+        if(idRecipe){
+            axios.get(`${environment.API_URL}/recetas/${idRecipe}`)
+            .then(recipeRes => {
+                setRecipe(recipeRes.data)
+                setPorcionesOriginales(recipeRes.data.porciones)
+            })
+            .catch(error => console.log(error))         
+
+            axios.get(`${environment.API_URL}/recetas/puntaje/${nickName}/${idRecipe}`)
+            .then(res => setPuntuacionUsuario(res.data))
+            .catch(error => setPuntuacionUsuario(0))
+
+            setFactorConversion(1)
+        } else {
+            setRecipe(data)
+        }
         axios.get(`${environment.API_URL}/recetas/filtros`)
-        .then(response => setdbFilters(response.data))
-        .catch(error => console.log(error))
-
-        axios.get(`${environment.API_URL}/recetas/puntaje/${nickName}/${idRecipe}`)
-        .then(res => setPuntuacionUsuario(res.data))
-        .catch(error => setPuntuacionUsuario(0))
-
-        setFactorConversion(1)
+            .then(response => setdbFilters(response.data))
+            .catch(error => console.log(error))
     }, [idRecipe])
 
     const onEditar = () => {
@@ -58,17 +62,31 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
         navigation.navigate("Create")
     }
 
-    const onDelete = () => {
+    const onDelete = async () => {
         Alert.alert("Atención!", "Seguro que quieres eliminar esta receta? Esta acción es irreversible", [
             {
               text: "Cancelar",
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: "Aceptar", onPress: () => {
-                axios.delete(`${environment.API_URL}/recetas/${nickName}/${idRecipe}`)
-                .then(res => navigation.navigate("Home"))
-                .catch(error => navigation.navigate("Home"))
+            { text: "Aceptar", onPress: async () => {
+                if(idRecipe){
+                    axios.delete(`${environment.API_URL}/recetas/${nickName}/${idRecipe}`)
+                    .then(res => navigation.navigate("Home"))
+                    .catch(error => navigation.navigate("Home"))
+                }
+                else {
+                    let savedRecipes = JSON.parse(await AsyncStorage.getItem('personalizated-recipes')) || [];
+                    if(savedRecipes.length === 0){
+                        Alert.alert("Atención", "No se ha podido eliminar la receta")
+                    }
+                    savedRecipes = savedRecipes.filter(sr => sr.id !== recipe.id);
+                    await AsyncStorage.setItem(
+                        'personalizated-recipes',
+                        JSON.stringify(savedRecipes)
+                    );
+                    navigation.navigate("Home")
+                }
             } }
           ])
     }
@@ -89,6 +107,29 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
         setFactorConversion(newPorc/porcionesOriginales)
     }
 
+    const savePersonalizatedRecipe = async () => {
+        try {
+            let savedRecipes = JSON.parse(await AsyncStorage.getItem('personalizated-recipes')) || [];
+
+            if(savedRecipes.length >= 5){
+                Alert.alert("Atencion", "Ya tienes 5 recetas personalizadas guardadas. Elimina alguna para poder guardar esta.")
+                return;
+            }      
+
+            recipe['id'] = uuid.v4();
+            savedRecipes.push(recipe)
+            await AsyncStorage.setItem(
+                'personalizated-recipes',
+                JSON.stringify(savedRecipes)
+            );
+            
+            Alert.alert("Atencion","Receta guardada correctamente")
+
+          } catch (error) {
+            Alert.alert("Error", "Error al guardar la receta")
+          }
+    }
+
     return (
         <View>
             <View style={{flexDirection:'row' , paddingTop: 49*heightFactor, width: '100%'}}>
@@ -96,16 +137,17 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                     <BackArrow style={styles.arrowBtn}/>
                 </TouchableOpacity>
                 <Text style={styles.headerText}>{recipe.nombre}</Text>
-                {recipe.nombreUsuario === nickName ? 
-                <>
-                    <TouchableOpacity onPress={onEditar}>
-                        {/* <Image source={require('../../../assets/images/ui/EditButton.png')} style={styles.edit}/> */}
+                {
+                    recipe.nombreUsuario === nickName 
+                    ? <TouchableOpacity onPress={onEditar}>
                         <EditIcon style={styles.edit}/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={onDelete}>
+                    : <></>
+                }
+                {recipe.nombreUsuario === nickName || idRecipe === undefined 
+                ?   <TouchableOpacity onPress={onDelete}>
                         <DeleteIcon style={styles.delete}/>
-                    </TouchableOpacity>
-                </>
+                    </TouchableOpacity>               
                 : <></>}
             </View>
             <View style={{left: 32*widthFactor}}>
@@ -135,7 +177,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                         <Text style={{fontSize: 25 * heightFactor, fontWeight:'500'}}>
                             Ingredientes
                         </Text>
-                        {dbFilters 
+                        {dbFilters
                          ? recipe.ingredientes.map((ingrediente, index) => (
                              <Ingrediente 
                                 isViewMode={true} 
@@ -161,13 +203,13 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                         <Input
                             width='50%'
                             keyboardType={'number-pad'}
-                            value={recipe.porciones.toString()}
+                            value={recipe.porciones ? recipe.porciones.toString(): '0'}
                             setValue = {(newPorc) => {onChangePorciones(newPorc)}}                        
                         />
-                    </View>   
+                    </View>                     
                     <View style={styles.container}>
                         {
-                            nickName === recipe.nombreUsuario 
+                            nickName === recipe.nombreUsuario || idRecipe === undefined
                             ? <></>
                             : <><Text style={{fontSize: 20 * heightFactor, fontWeight:'500', width:'100%', textAlign:'center'}}>Calificar Receta</Text> 
                                 <Rating
@@ -181,7 +223,16 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                                 />  
                                 </>
                         }  
-                    </View> 
+                    </View>                    
+                        {
+                            factorConversion === 1 || idRecipe === undefined
+                            ? <></>
+                            : <View style={styles.container}>
+                                <TouchableOpacity onPress={savePersonalizatedRecipe} style={styles.containerButton} activeOpacity={.2}>
+                                    <Text style={styles.text}>GUARDAR RECETA PERSONALIZADA</Text>
+                                </TouchableOpacity>
+                            </View> 
+                        }  
                 </ScrollView>  
             </SafeAreaView>       
             </View>
@@ -193,6 +244,22 @@ const widthFactor = Dimensions.get('window').width/390;
 const heightFactor = Dimensions.get('window').height/844;
 
 const styles = StyleSheet.create({
+    containerButton: {
+        backgroundColor: '#FF4B3A',
+        
+        width: '100%',
+
+        padding: 15,
+        marginVertical: 40,
+
+        alignItems: 'center',
+        borderRadius: 30
+    },
+    text: {
+        fontWeight: 'bold',
+        fontSize: 15,
+        color: 'white'
+    },
     container: {
         flexWrap: 'wrap',
         flexDirection:'row',
