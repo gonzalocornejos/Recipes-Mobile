@@ -35,8 +35,9 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
             setMostrar(true)
         } else if (nombreUsado === NO_USADO){
             navigation.navigate('AddIngredientes')
-        } else {
+        } else if(nombreUsado === SOBREESCRIBIR){
             setMostrar(false)
+            navigation.navigate('AddIngredientes')
         }
 
     },[nombreUsado])
@@ -79,7 +80,6 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
 
     const onContinuar = () => {
         changeSobreescribir(SOBREESCRIBIR)
-        navigation.navigate('AddIngredientes')
     }
 
     const onEditar = () => {

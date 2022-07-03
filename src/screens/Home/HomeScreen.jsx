@@ -8,9 +8,10 @@ import environment from "../../constants/environment";
 import { connect } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import Filter from "../../components/Recipes/Filter";
+import {CREAR} from "../../stores/CreateRecipe/Constants/index";
+import {cambiarCrear,empty} from "../../stores/CreateRecipe/Actions/RecipeActions";
 
-
-const HomeScreen = ({navigation, nickName}) => {
+const HomeScreen = ({navigation, nickName,changeCrear,vaciar}) => {
     const isFocused = useIsFocused();
     const [recipes, setRecipes] = useState([])
     const [filter, setFilter] = useState({
@@ -32,7 +33,10 @@ const HomeScreen = ({navigation, nickName}) => {
     const [isModalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
+        console.log("entre")
         loadRecipes();
+        changeCrear(CREAR)
+        vaciar()
     }, [isFocused, filter])
 
     const loadRecipes = () => {
@@ -133,4 +137,11 @@ const mapStateToProps = state => ({
     nickName: state.authentication.userName
   });
 
-export default connect(mapStateToProps)(HomeScreen);
+const mapDispatchToProps = dispatch => {
+    return {
+        changeCrear: (estado) => dispatch(cambiarCrear(estado)),
+        vaciar: () => dispatch(empty())
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(HomeScreen);

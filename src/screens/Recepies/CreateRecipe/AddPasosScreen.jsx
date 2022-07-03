@@ -12,7 +12,7 @@ import environment from '../../../constants/environment';
 import { CREAR,EDITAR,SOBREESCRIBIR} from "../../../stores/CreateRecipe/Constants/index";
 
 
-const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear}) => {
+const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,vaciar}) => {
     const scrollViewRef = useRef();
 
     const [pasos,setPasos] = useState([]);
@@ -75,20 +75,20 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear}) 
         if (recipe.estado === CREAR){
             axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
             .then(response => {
-                empty();
+                vaciar();
                 navigation.navigate("MyCreatedRecipes")})
             .catch(error => console.log(error));
         } else if (recipe.estado === SOBREESCRIBIR){
             axios.post(`${environment.API_URL}/recetas/sobreescribir/${userName}`, recipe)
             .then(response => {
-                empty();
+                vaciar();
                 changeCrear(CREAR)
                 navigation.navigate("MyCreatedRecipes")})
             .catch(error => console.log(error));
         } else {
             axios.patch(`${environment.API_URL}/recetas/editar/${userName}`, recipe)
             .then(response => {
-                empty();
+                vaciar();
                 navigation.navigate("MyCreatedRecipes")})
             .catch(error => console.log(error));
         }
@@ -172,6 +172,7 @@ const mapDispatchToProps = dispatch => {
     return {
         updatePasos : (pasos) => dispatch(addPasos(pasos)),
         changeCrear: (estado) => dispatch(cambiarCrear(estado)),
+        vaciar: () => dispatch(empty())
     }
 };
 
