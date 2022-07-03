@@ -1,4 +1,4 @@
-import {  View, Text, StyleSheet, Dimensions , ScrollView} from 'react-native';
+import {  View, Text, StyleSheet, Dimensions , ScrollView, Alert} from 'react-native';
 import {useState, useRef, useEffect } from 'react'
 import MainButton from "../../../components/Application/Components/MainButton";
 import Paso from "../../../components/Recipes/Paso";
@@ -11,6 +11,9 @@ import axios from 'axios';
 import environment from '../../../constants/environment';
 import { CREAR,EDITAR,SOBREESCRIBIR} from "../../../stores/CreateRecipe/Constants/index";
 import { useIsFocused } from "@react-navigation/native";
+import * as Network from 'expo-network';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,vaciar}) => {
     const isFocused = useIsFocused();
@@ -72,26 +75,58 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
         setPasos(data)
     }
 
-    const onPublicar = () => {
-        if (recipe.estado === CREAR){
-            axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
-            .then(response => {
-                vaciar();
-                navigation.navigate("MyCreatedRecipes")})
-            .catch(error => console.log(error));
-        } else if (recipe.estado === SOBREESCRIBIR){
-            axios.post(`${environment.API_URL}/recetas/sobreescribir/${userName}`, recipe)
-            .then(response => {
-                vaciar();
-                changeCrear(CREAR)
-                navigation.navigate("MyCreatedRecipes")})
-            .catch(error => console.log(error));
-        } else {
-            axios.patch(`${environment.API_URL}/recetas/editar/${userName}/${recipe.id}`, recipe)
-            .then(response => {
-                vaciar();
-                navigation.navigate("MyCreatedRecipes")})
-            .catch(error => console.log(error));
+    const onPublicar = async () => {        
+        let state = await Network.getNetworkStateAsync();
+        let upload = false;
+        if(state.type !== "WIFI"){
+            Alert.alert("Atención, no estas con WIFI. ¿Quieren subir igualmente la aplicacion?", [
+                {
+                  text: "Cancelar",
+                  onPress: () => {
+                    Alert.alert("Atención", "¿Quieres guardar la receta para subirla en un futuro?", [
+                        {
+                          text: "Cancelar",
+                          onPress: () => {
+                            upload = false;
+                          },
+                          style: "cancel"
+                        },
+                        { text: "Aceptar", onPress: async () => {
+                            upload = false;
+                            await AsyncStorage.setItem("later-recipe", JSON.stringify(recipe))
+                          } 
+                        }
+                      ])
+                  },
+                  style: "cancel"
+                },
+                { text: "Aceptar", onPress: () => {
+                    upload = true;
+                  } 
+                }
+              ])
+        }
+        if(upload) {
+            if (recipe.estado === CREAR){
+                axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
+                .then(response => {
+                    vaciar();
+                    navigation.navigate("MyCreatedRecipes")})
+                .catch(error => console.log(error));
+            } else if (recipe.estado === SOBREESCRIBIR){
+                axios.post(`${environment.API_URL}/recetas/sobreescribir/${userName}`, recipe)
+                .then(response => {
+                    vaciar();
+                    changeCrear(CREAR)
+                    navigation.navigate("MyCreatedRecipes")})
+                .catch(error => console.log(error));
+            } else {
+                axios.patch(`${environment.API_URL}/recetas/editar/${userName}/${recipe.id}`, recipe)
+                .then(response => {
+                    vaciar();
+                    navigation.navigate("MyCreatedRecipes")})
+                .catch(error => console.log(error));
+            }         
         }
     }
 
