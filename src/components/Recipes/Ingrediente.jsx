@@ -29,6 +29,10 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
             cambiarFactor(cantidad/cantidadOriginal)
     },[cantidad])
 
+    useEffect(() => {
+        setCantidad((cantidadOriginal*factorConversion).toString())
+    },[factorConversion])
+
     const updateName = (newName) => {
         setNombre(newName);
         verificarValidez();
