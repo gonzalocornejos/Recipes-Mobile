@@ -14,6 +14,7 @@ import {cambiarCrear,empty} from "../../stores/CreateRecipe/Actions/RecipeAction
 const HomeScreen = ({navigation, nickName,changeCrear,vaciar}) => {
     const isFocused = useIsFocused();
     const [recipes, setRecipes] = useState([])
+    const [filteredRecipes, setFilteredRecipes] = useState([]);
     const [filter, setFilter] = useState({
         filter : {
             nombre : '',
@@ -42,7 +43,10 @@ const HomeScreen = ({navigation, nickName,changeCrear,vaciar}) => {
     const loadRecipes = () => {
         setRefreshing(true);
         axios.post(`${environment.API_URL}/recetas/buscar`, filter)
-            .then(response => setRecipes(response.data.items))
+            .then(response => {
+                setRecipes(response.data.items)
+                setFilteredRecipes(response.data.items)
+            })
             .catch(error => console.log(error)) 
             .finally(f => setRefreshing(false))
     }
@@ -53,6 +57,11 @@ const HomeScreen = ({navigation, nickName,changeCrear,vaciar}) => {
 
     const setFilterFn = (param) => {
         setFilter(param)
+    }
+
+    const filterRecipes = (value) => {
+        let copyRecipe = [...recipes]
+        setFilteredRecipes(copyRecipe.filter(r => r.nombre.startsWith(value)))
     }
 
     return (
@@ -68,6 +77,7 @@ const HomeScreen = ({navigation, nickName,changeCrear,vaciar}) => {
                     <Input
                         placeholder="Buscar"
                         width="87%" 
+                        setValue={(value) => filterRecipes(value)}
                     />
                    <TouchableOpacity style={styles.touchable} onPress={() => toggleModal()}>
                             <FilterIcon
@@ -89,7 +99,7 @@ const HomeScreen = ({navigation, nickName,changeCrear,vaciar}) => {
                         contentContainerStyle={{paddingBottom: 30}}>
                             {recipes.length === 0 
                                 ? <Text>No se han encontrado recetas</Text>
-                                : recipes.map((recipe) => (
+                                : filteredRecipes.map((recipe) => (
                                 <Card 
                                 navigation={navigation}
                                 key={recipe.recipeId.toString() + recipe.esFavorito.toString() }

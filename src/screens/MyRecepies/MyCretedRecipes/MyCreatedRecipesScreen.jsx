@@ -18,6 +18,7 @@ import {cambiarCrear,empty} from "../../../stores/CreateRecipe/Actions/RecipeAct
 const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear}) => {
     const isFocused = useIsFocused();
     const [recipes, setRecipes] = useState([])
+    const [filteredRecipes, setFilteredRecipes] = useState([]);
     const [filter, setFilter] = useState({
         filter : {
             nombre : '',
@@ -35,7 +36,6 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
         sortOrder : 'DESC'
     })
     const [refreshing, setRefreshing] = useState(false);
-    const [isModalOpen, setModalOpen] = useState(false);
     const [personalizatedRecipes, setPersonalizatedRecipes] = useState([]);
 
     useEffect(async () => {
@@ -48,7 +48,10 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
     const loadRecipes = () => {
         setRefreshing(true);
         axios.post(`${environment.API_URL}/recetas/buscar`, filter)
-            .then(response => setRecipes(response.data.items))
+            .then(response => {
+                setRecipes(response.data.items)
+                setFilteredRecipes(response.data.items)
+            })
             .catch(error => console.log(error)) 
             .finally(f => setRefreshing(false))     
     }
@@ -62,8 +65,9 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
         }
     }
 
-    const toggleModal = () => {
-        setModalOpen(!isModalOpen)
+    const filterRecipes = (value) => {
+        let copyRecipe = [...recipes]
+        setFilteredRecipes(copyRecipe.filter(r => r.nombre.startsWith(value)))
     }
 
     return (
@@ -79,12 +83,8 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                         <Input
                             placeholder="Buscar"
                             width="87%" 
-                        />
-                        <TouchableOpacity style={styles.touchable} onPress={() => toggleModal()}>
-                            <FilterIcon
-                                style={styles.filter}
-                            />
-                        </TouchableOpacity>                      
+                            setValue={(value) => filterRecipes(value)}
+                        />                     
                     </View>
 
                     <View>
@@ -100,7 +100,7 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                             contentContainerStyle={{paddingBottom: 30}}>
                                 {recipes.length === 0 
                                 ? <Text>No se han encontrado recetas</Text>
-                                : recipes.map((recipe) => (
+                                : filteredRecipes.map((recipe) => (
                                     <Card 
                                     own
                                     navigation={navigation}
