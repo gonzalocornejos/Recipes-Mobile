@@ -103,7 +103,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                         <EditIcon style={styles.edit}/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={onDelete}>
-                        <EditIcon style={styles.delete}/>
+                        <DeleteIcon style={styles.delete}/>
                     </TouchableOpacity>
                 </>
                 : <></>}
