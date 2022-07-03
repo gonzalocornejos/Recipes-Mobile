@@ -31,22 +31,17 @@ const AddCategoriasScreen = ({navigation,updateCategories,recipe}) => {
             agregarCategoriasInicial()
     },[dbFilters])
 
+    useEffect(() => {
+        console.log(categorias)
+    },[categorias])
+
     const agregarCategoriasInicial = () => {
         var categoriasCopy = []
+        console.log(recipe.categorias)
         recipe.categorias.forEach(categoria => {
-            var categoriaElement
-            dbFilters.categorias.forEach(element => {
-                if(element.item === categoria){
-                    categoriaElement = element
-                }
-            });
-            var element = {
-                label: categoriaElement.item,
-                value: categoriaElement.id
-            }
-            var newCategoria = {
+            const newCategoria = {
                 id: uuid.v4(),
-                categoria: element,
+                categoria: categoria,
                 valido: true
             }
             categoriasCopy.push(newCategoria)

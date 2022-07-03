@@ -3,7 +3,7 @@ import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
 
 const Categoria = ({element,index,onChange,onDelete,categorias,valid,id}) => {
-    const [categoria,setCategoria] = useState(element)
+    const [categoria,setCategoria] = useState(element ? element : undefined)
     const [number,setNumber] = useState(index)
     const [valido,setValido] = useState(valid)
     const [categoriasList,setCategoriasList] = useState([]);
@@ -18,8 +18,17 @@ const Categoria = ({element,index,onChange,onDelete,categorias,valid,id}) => {
             data.push(newCategoria);
         })
         setCategoriasList(data)
-        console.log(categoria)
     },[])
+
+    useEffect(() => {
+        let newRCat = undefined
+        categorias.forEach((categoria) => {
+            if (element !== null && element === categoria.item) {
+                newRCat = categoria;
+            }
+        })
+        setCategoria(newRCat);
+    },[categorias])
 
     const updateCat = (newCat) => {
         let newRCat

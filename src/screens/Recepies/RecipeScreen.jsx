@@ -27,11 +27,14 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
     });
     const [dbFilters, setdbFilters] = useState(undefined)
     const [puntuacionUsuario, setPuntuacionUsuario] = useState(0);
+    const [factorConversion, setFactorConversion] = useState();
+    const [porcionesOriginales, setPorcionesOriginales] = useState();
 
     useEffect(() => {
         axios.get(`${environment.API_URL}/recetas/${idRecipe}`)
         .then(recipeRes => {
             setRecipe(recipeRes.data)
+            setPorcionesOriginales(recipeRes.data.porciones)
         })
         .catch(error => console.log(error))
         
@@ -43,7 +46,12 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
         .then(res => setPuntuacionUsuario(res.data))
         .catch(error => setPuntuacionUsuario(0))
 
+        setFactorConversion(1)
     }, [idRecipe])
+
+    useEffect(() => {
+        console.log(factorConversion)
+    },[factorConversion])
 
     const onEditar = () => {
         changeEditar(EDITAR)
@@ -56,6 +64,16 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
         axios.post(`${environment.API_URL}/recetas/puntuar/${idRecipe}/${nickName}/${rating}`)
         .then(res => Alert.alert("Atención", "Haz puntuado la receta, recuerda que puedes cambiar tu opnion"))
         .catch(error => Alert.alert("Atención", "No se ha podido puntuar la receta"))
+    }
+
+    const cambiarFactor = (newFactor) => {
+        setFactorConversion(newFactor);
+        setRecipe({...recipe,porciones:newFactor*porcionesOriginales})
+    }
+
+    const onChangePorciones = (newPorc) => {
+        setRecipe({...recipe,porciones:newPorc})
+        setFactorConversion(newPorc/porcionesOriginales)
     }
 
     return (
@@ -105,7 +123,9 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                                 element={ingrediente} 
                                 key={index + recipe.nombre} 
                                 index={index} 
-                                unidades={dbFilters.unidades}/>
+                                unidades={dbFilters.unidades}
+                                factorConversion={factorConversion}
+                                cambiarFactor={(newFactor) => {cambiarFactor(newFactor)}}/>
                          ))
                          : <></>}
                     </View>
@@ -122,7 +142,8 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                         <Input
                             width='50%'
                             keyboardType={'number-pad'}
-                            value={recipe.porciones.toString()}                          
+                            value={recipe.porciones.toString()}
+                            setValue = {(newPorc) => {onChangePorciones(newPorc)}}                        
                         />
                     </View>   
                     <View style={styles.container}>

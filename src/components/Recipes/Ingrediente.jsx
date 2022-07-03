@@ -2,14 +2,15 @@ import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet,
 import {useState,useEffect} from 'react'
 import RNPickerSelect from "react-native-picker-select";
 
-const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = false}) => {
+const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = false, factorConversion = 1, cambiarFactor}) => {
     const [nombre,setNombre] = useState(element.nombre);
-    const [cantidad,setCantidad] = useState(element.cantidad);
+    const [cantidad,setCantidad] = useState(!isViewMode ? element.cantidad : (element.cantidad*factorConversion).toString());
     const [unidad,setUnidad] = useState(element.unidad);
     const [unidadNombre, setUnidadNombre] = useState('');
     const [descripcion,setDescripcion] = useState(element.descripcion);
     const [valido,setValido] = useState(element.valido);
     const [unidadesList,setUnidadesList] = useState([]);
+    const [cantidadOriginal,setCantidadOriginal] = useState(element.cantidad) 
 
     useEffect(()=>{
         let data = [...unidadesList]
@@ -22,6 +23,11 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
         })
         setUnidadesList(data)
     },[])
+
+    useEffect(() => {
+        if(isViewMode)
+            cambiarFactor(cantidad/cantidadOriginal)
+    },[cantidad])
 
     const updateName = (newName) => {
         setNombre(newName);
@@ -84,6 +90,7 @@ const Ingrediente = ({element,index,onChange,onDelete,unidades, isViewMode = fal
                     <Text style={styles.cantText}>Cantidad</Text>
                     <TextInput value={cantidad} 
                                 style={styles.CantInput}
+                                keyboardType={'number-pad'}
                                 onChangeText={(cant) => updateCant(cant)}/>
                 </View>
                 <View style={{paddingLeft:24*widthFactor, flexDirection:'column'}}>

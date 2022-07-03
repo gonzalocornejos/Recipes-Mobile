@@ -18,6 +18,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear}) 
     const [pasos,setPasos] = useState([]);
 
     useEffect(()=>{
+        console.log(recipe)
         agregarPasosInicial()
     },[])
 
