@@ -11,6 +11,9 @@ import { Rating } from 'react-native-ratings';
 import { connect } from 'react-redux';
 import {EDITAR} from "../../stores/CreateRecipe/Constants/index";
 import {addEverything, cambiarEditar} from "../../stores/CreateRecipe/Actions/RecipeActions";
+import EditIcon from '../../components/Application/Icons/EditIcon';
+import DeleteIcon from '../../components/Application/Icons/DeleteIcon';
+
 
 const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}) => {
     const {idRecipe} = route.params;
@@ -59,6 +62,20 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
         navigation.navigate("Create")
     }
 
+    const onDelete = () => {
+        Alert.alert("Atención!", "Seguro que quieres eliminar esta receta? Esta acción es irreversible", [
+            {
+              text: "Cancelar",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: "Aceptar", onPress: () => {
+                axios.delete(`${environment.API_URL}/recetas/${nickName}/${idRecipe}`)
+                .then(res => navigation.navigate("Home"))
+                .catch(error => navigation.navigate("Home"))
+            } }
+          ])
+    }
 
     const ratingCompleted = (rating) => {
         axios.post(`${environment.API_URL}/recetas/puntuar/${idRecipe}/${nickName}/${rating}`)
@@ -84,9 +101,15 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
                 </TouchableOpacity>
                 <Text style={styles.headerText}>{recipe.nombre}</Text>
                 {recipe.nombreUsuario === nickName ? 
-                <TouchableOpacity onPress={onEditar}>
-                    <Image source={require('../../../assets/images/ui/EditButton.png')} style={styles.edit}/>
-                </TouchableOpacity>
+                <>
+                    <TouchableOpacity onPress={onEditar}>
+                        {/* <Image source={require('../../../assets/images/ui/EditButton.png')} style={styles.edit}/> */}
+                        <EditIcon style={styles.edit}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onDelete}>
+                        <EditIcon style={styles.delete}/>
+                    </TouchableOpacity>
+                </>
                 : <></>}
             </View>
             <View style={{left: 32*widthFactor}}>
@@ -236,7 +259,14 @@ const styles = StyleSheet.create({
         height: 31*heightFactor,
         alignSelf: 'baseline',
         marginTop: 10*heightFactor,
-        marginLeft: 35*widthFactor,
+        marginLeft: 25*widthFactor,
+    },
+    delete : {
+        width: 31*widthFactor,
+        height: 31*heightFactor,
+        alignSelf: 'baseline',
+        marginTop: 10*heightFactor,
+        marginLeft: 15*widthFactor,
     }
 });
 
