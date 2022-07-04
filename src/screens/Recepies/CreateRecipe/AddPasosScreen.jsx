@@ -79,7 +79,6 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
         let state = await Network.getNetworkStateAsync();
         let upload = false;
         if(state.type !== "WIFI"){
-            Alert.alert("Atención, no estas con WIFI. ¿Quieren subir igualmente la aplicacion?", [
             Alert.alert("Atención", "No estas con WIFI. ¿Quieren subir igualmente la receta?", [
                 {
                   text: "Cancelar",
