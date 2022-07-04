@@ -80,6 +80,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
         let upload = false;
         if(state.type !== "WIFI"){
             Alert.alert("Atención, no estas con WIFI. ¿Quieren subir igualmente la aplicacion?", [
+            Alert.alert("Atención", "No estas con WIFI. ¿Quieren subir igualmente la receta?", [
                 {
                   text: "Cancelar",
                   onPress: () => {
@@ -94,6 +95,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
                         { text: "Aceptar", onPress: async () => {
                             upload = false;
                             await AsyncStorage.setItem("later-recipe", JSON.stringify(recipe))
+                            navigation.navigate("MyCreatedRecipes")
                           } 
                         }
                       ])
@@ -104,7 +106,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
                     upload = true;
                   } 
                 }
-              ])
+              ])           
         }
         if(upload) {
             if (recipe.estado === CREAR){
