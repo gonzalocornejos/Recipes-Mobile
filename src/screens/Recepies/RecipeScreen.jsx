@@ -14,9 +14,10 @@ import {addEverything, cambiarEditar} from "../../stores/CreateRecipe/Actions/Re
 import EditIcon from '../../components/Application/Icons/EditIcon';
 import DeleteIcon from '../../components/Application/Icons/DeleteIcon';
 import uuid from 'react-native-uuid';
-
+import { useIsFocused } from "@react-navigation/native";
 
 const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}) => {
+    const isFocused = useIsFocused();
     const {idRecipe, data, esParaSubir, esPersonalizada, estado} = route.params;
     const [recipe,setRecipe] = useState({
         imagen: '',
@@ -54,7 +55,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}
         axios.get(`${environment.API_URL}/recetas/filtros`)
             .then(response => setdbFilters(response.data))
             .catch(error => console.log(error))
-    }, [idRecipe])
+    }, [isFocused])
 
     const onEditar = () => {
         changeEditar(EDITAR)
