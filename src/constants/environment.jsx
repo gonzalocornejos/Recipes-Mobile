@@ -1,5 +1,5 @@
 const environment = {
-    API_URL: "https://3113-170-51-141-206.sa.ngrok.io/api"
+    API_URL: "https://e956-2800-40-1a-4ef-692b-e465-1030-10ef.sa.ngrok.io/api"
 }
 
 export default environment;

@@ -108,7 +108,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
                   } 
                 }
               ])           
-        }
+        } else upload=true;
         if(upload) {
             if (recipe.estado === CREAR){
                 axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
@@ -127,6 +127,7 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
                 axios.patch(`${environment.API_URL}/recetas/editar/${userName}/${recipe.id}`, recipe)
                 .then(response => {
                     vaciar();
+                    changeCrear(CREAR)
                     navigation.navigate("MyCreatedRecipes")})
                 .catch(error => console.log(error));
             }         

@@ -93,7 +93,7 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
             setNombre(recipeRes.data.nombre)
             setDescripcion(recipeRes.data.descripcion)
             setImage(recipeRes.data.imagen)
-            setPorciones(recipeRes.data.porciones)
+            setPorciones(recipeRes.data.porciones.toString())
             setMostrar(false)
         })
         .catch(error => console.log(error))
