@@ -18,7 +18,7 @@ const Card = ({navigation, esParaSubir = false ,id = undefined, imageUri, recipe
     }
 
     const pressCard = () => {
-            navigation.navigate('ViewRecipe', {idRecipe: id, data: data, esParaSubir : esParaSubir})
+            navigation.navigate('ViewRecipe', {idRecipe: id, data, esParaSubir})
     }
 
     return ( 
