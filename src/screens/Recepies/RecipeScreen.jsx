@@ -9,16 +9,15 @@ import Ingrediente from '../../components/Recipes/Ingrediente';
 import Input from '../../components/Application/Components/Input';
 import { Rating } from 'react-native-ratings';
 import { connect } from 'react-redux';
-import {EDITAR} from "../../stores/CreateRecipe/Constants/index";
+import {CREAR, EDITAR, SOBREESCRIBIR} from "../../stores/CreateRecipe/Constants/index";
 import {addEverything, cambiarEditar} from "../../stores/CreateRecipe/Actions/RecipeActions";
 import EditIcon from '../../components/Application/Icons/EditIcon';
 import DeleteIcon from '../../components/Application/Icons/DeleteIcon';
 import uuid from 'react-native-uuid';
-import MainButton from '../../components/Application/Components/MainButton';
 
 
-const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything, estado = undefined}) => {
-    const {idRecipe, data, esParaSubir} = route.params;
+const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything}) => {
+    const {idRecipe, data, esParaSubir, esPersonalizada, estado} = route.params;
     const [recipe,setRecipe] = useState({
         imagen: '',
         nombre : '',
@@ -36,7 +35,9 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
     const [porcionesOriginales, setPorcionesOriginales] = useState();
 
     useEffect(() => {
-        if(idRecipe){
+        if(esPersonalizada || esParaSubir){
+            setRecipe(data)       
+        } else {
             axios.get(`${environment.API_URL}/recetas/${idRecipe}`)
             .then(recipeRes => {
                 setRecipe(recipeRes.data)
@@ -49,8 +50,6 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
             .catch(error => setPuntuacionUsuario(0))
 
             setFactorConversion(1)
-        } else {
-            setRecipe(data)
         }
         axios.get(`${environment.API_URL}/recetas/filtros`)
             .then(response => setdbFilters(response.data))
@@ -77,7 +76,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                     .catch(error => navigation.navigate("Home"))
                 }
                 else {
-                    if(recipe.author == "PERSONALIZADA"){
+                    if(esPersonalizada){
                         let savedRecipes = JSON.parse(await AsyncStorage.getItem('personalizated-recipes')) || [];
                         if(savedRecipes.length === 0){
                             Alert.alert("Atención", "No se ha podido eliminar la receta")
@@ -87,7 +86,6 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                             'personalizated-recipes',
                             JSON.stringify(savedRecipes)
                         );
-                        navigation.navigate("Home")
                     } else {
                         let savedRecipes = JSON.parse(await AsyncStorage.getItem('later-recipe')) || [];
                         if(savedRecipes.length === 0){
@@ -99,6 +97,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                             JSON.stringify(savedRecipes)
                         );
                     }               
+                    navigation.navigate("Home")
                 }
             } }
           ])
@@ -143,27 +142,47 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
           }
     }
 
-    const onPublicar = (estado) => {
+    const onPublicar = async () => {
+        console.log(estado)
         if (estado === CREAR){
-            axios.post(`${environment.API_URL}/recetas/${userName}`, recipe)
+            axios.post(`${environment.API_URL}/recetas/${nickName}`, recipe)
             .then(response => {
-                vaciar();
                 navigation.navigate("MyCreatedRecipes")})
             .catch(error => console.log(error));
         } else if (estado === SOBREESCRIBIR){
-            axios.post(`${environment.API_URL}/recetas/sobreescribir/${userName}`, recipe)
+            axios.post(`${environment.API_URL}/recetas/sobreescribir/${nickName}`, recipe)
             .then(response => {
-                vaciar();
                 changeCrear(CREAR)
                 navigation.navigate("MyCreatedRecipes")})
             .catch(error => console.log(error));
         } else {
-            axios.patch(`${environment.API_URL}/recetas/editar/${userName}/${recipe.id}`, recipe)
+            axios.patch(`${environment.API_URL}/recetas/editar/${nickName}/${recipe.id}`, recipe)
             .then(response => {
-                vaciar();
                 navigation.navigate("MyCreatedRecipes")})
             .catch(error => console.log(error));
         }
+        if(esPersonalizada){
+            let savedRecipes = JSON.parse(await AsyncStorage.getItem('personalizated-recipes')) || [];
+            if(savedRecipes.length === 0){
+                Alert.alert("Atención", "No se ha podido eliminar la receta")
+            }
+            savedRecipes = savedRecipes.filter(sr => sr.id !== recipe.id);
+            await AsyncStorage.setItem(
+                'personalizated-recipes',
+                JSON.stringify(savedRecipes)
+            );
+        } else {
+            let savedRecipes = JSON.parse(await AsyncStorage.getItem('later-recipe')) || [];
+            if(savedRecipes.length === 0){
+                Alert.alert("Atención", "No se ha podido eliminar la receta")
+            }
+            savedRecipes = savedRecipes.filter(sr => sr.id !== recipe.id);
+            await AsyncStorage.setItem(
+                'later-recipe',
+                JSON.stringify(savedRecipes)
+            );
+        }               
+        navigation.navigate("MyCreatedRecipes")
     }
 
     return (
@@ -206,7 +225,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                     </View>   
                     <View style={styles.categoryContainer}>
                         {recipe.categorias.map((categoria, index) => {
-                            return <Text key={index} style={styles.category}>{esParaSubir ? categoria.categoria.item : categoria.item}</Text>
+                            return <Text key={index} style={styles.category}>{categoria.categoria ? categoria.categoria.item : categoria.item}</Text>
                         })}                    
                     </View> 
                     <View style={styles.container}>
@@ -245,7 +264,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                     </View>                     
                     <View style={styles.container}>
                         {
-                            nickName === recipe.nombreUsuario || idRecipe === undefined
+                            nickName === recipe.nombreUsuario || esPersonalizada || esParaSubir
                             ? <></>
                             : <><Text style={{fontSize: 20 * heightFactor, fontWeight:'500', width:'100%', textAlign:'center'}}>Calificar Receta</Text> 
                                 <Rating
@@ -261,7 +280,7 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                         }  
                     </View>                    
                         {
-                            factorConversion === 1 || idRecipe === undefined
+                            factorConversion === 1 || esPersonalizada
                             ? <></>
                             : <View style={styles.container}>
                                 <TouchableOpacity onPress={savePersonalizatedRecipe} style={styles.containerButton} activeOpacity={.2}>

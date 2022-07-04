@@ -139,6 +139,7 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                                                 id={recipe.recipeId}
                                                 key={uuid.v4()}
                                                 author={"PERSONALIZADA"} 
+                                                esPersonalizada={true}
                                                 recipeName={recipe.nombre}
                                                 score={recipe.calificacion}
                                                 isFavorite={recipe.esFavorito} 
