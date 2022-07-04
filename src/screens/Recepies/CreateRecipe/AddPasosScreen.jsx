@@ -93,7 +93,9 @@ const AddPasosScreen = ({navigation,updatePasos,recipe, userName, changeCrear,va
                         },
                         { text: "Aceptar", onPress: async () => {
                             upload = false;
-                            await AsyncStorage.setItem("later-recipe", JSON.stringify(recipe))
+                            let savedRecipes = JSON.parse(await AsyncStorage.getItem('later-recipe')) || [];
+                            savedRecipes.push(recipe)
+                            await AsyncStorage.setItem("later-recipe", JSON.stringify(savedRecipes))
                             navigation.navigate("MyCreatedRecipes")
                           } 
                         }

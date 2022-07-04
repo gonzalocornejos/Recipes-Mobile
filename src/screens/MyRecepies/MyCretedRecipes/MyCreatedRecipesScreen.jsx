@@ -132,8 +132,8 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                                     imageUri={recipe.fotoFinal}/>
                                 ))} 
                                 {
-                                    personalizatedRecipes.map((recipe) => (
-                                        <Card 
+                                    personalizatedRecipes.map((recipe) => {
+                                        return <Card 
                                                 own
                                                 navigation={navigation}
                                                 key={uuid.v4()}
@@ -143,11 +143,11 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                                                 isFavorite={recipe.esFavorito} 
                                                 imageUri={recipe.imagen} 
                                                 data={recipe}/>
-                                    ))
+                                    })
                                 }
                                 {
-                                    savedRecipes.map((recipe) => (
-                                        <Card 
+                                    savedRecipes.map((recipe) => {
+                                        return <Card 
                                                 own
                                                 navigation={navigation}
                                                 key={uuid.v4()}
@@ -159,7 +159,7 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                                                 data={recipe}
                                                 esParaSubir={true}
                                                 estado={recipe.estado}/>
-                                    ))
+                                    })
                                 }
                             </ScrollView>
                         </SafeAreaView>     
