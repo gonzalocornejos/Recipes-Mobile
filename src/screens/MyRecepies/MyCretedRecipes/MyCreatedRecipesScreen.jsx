@@ -136,6 +136,7 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                                         return <Card 
                                                 own
                                                 navigation={navigation}
+                                                id={recipe.recipeId}
                                                 key={uuid.v4()}
                                                 author={"PERSONALIZADA"} 
                                                 recipeName={recipe.nombre}
@@ -150,6 +151,7 @@ const MyCreatedRecipesScreen = ({navigation, logout, nickName,vaciar,changeCrear
                                         return <Card 
                                                 own
                                                 navigation={navigation}
+                                                id={recipe.recipeId}
                                                 key={uuid.v4()}
                                                 author={"PARA SUBIR"} 
                                                 recipeName={recipe.nombre}

@@ -17,8 +17,8 @@ import uuid from 'react-native-uuid';
 import MainButton from '../../components/Application/Components/MainButton';
 
 
-const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything, esParaSubir = false, estado = undefined}) => {
-    const {idRecipe, data} = route.params;
+const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything, estado = undefined}) => {
+    const {idRecipe, data, esParaSubir} = route.params;
     const [recipe,setRecipe] = useState({
         imagen: '',
         nombre : '',
@@ -77,16 +77,28 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                     .catch(error => navigation.navigate("Home"))
                 }
                 else {
-                    let savedRecipes = JSON.parse(await AsyncStorage.getItem('personalizated-recipes')) || [];
-                    if(savedRecipes.length === 0){
-                        Alert.alert("Atención", "No se ha podido eliminar la receta")
-                    }
-                    savedRecipes = savedRecipes.filter(sr => sr.id !== recipe.id);
-                    await AsyncStorage.setItem(
-                        'personalizated-recipes',
-                        JSON.stringify(savedRecipes)
-                    );
-                    navigation.navigate("Home")
+                    if(recipe.author == "PERSONALIZADA"){
+                        let savedRecipes = JSON.parse(await AsyncStorage.getItem('personalizated-recipes')) || [];
+                        if(savedRecipes.length === 0){
+                            Alert.alert("Atención", "No se ha podido eliminar la receta")
+                        }
+                        savedRecipes = savedRecipes.filter(sr => sr.id !== recipe.id);
+                        await AsyncStorage.setItem(
+                            'personalizated-recipes',
+                            JSON.stringify(savedRecipes)
+                        );
+                        navigation.navigate("Home")
+                    } else {
+                        let savedRecipes = JSON.parse(await AsyncStorage.getItem('later-recipe')) || [];
+                        if(savedRecipes.length === 0){
+                            Alert.alert("Atención", "No se ha podido eliminar la receta")
+                        }
+                        savedRecipes = savedRecipes.filter(sr => sr.id !== recipe.id);
+                        await AsyncStorage.setItem(
+                            'later-recipe',
+                            JSON.stringify(savedRecipes)
+                        );
+                    }               
                 }
             } }
           ])
@@ -193,9 +205,9 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                         />   
                     </View>   
                     <View style={styles.categoryContainer}>
-                        {recipe.categorias.map((categoria, index) => (
-                            <Text key={index} style={styles.category}>{categoria.item}</Text>
-                        ))}                    
+                        {recipe.categorias.map((categoria, index) => {
+                            return <Text key={index} style={styles.category}>{esParaSubir ? categoria.categoria.item : categoria.item}</Text>
+                        })}                    
                     </View> 
                     <View style={styles.container}>
                         <Text style={{fontSize: 25 * heightFactor, fontWeight:'500'}}>
@@ -259,9 +271,11 @@ const RecipeScreen = ({route, navigation,nickName,changeEditar,updateEverything,
                         }  
                         {
                             esParaSubir ?
-                            <MainButton 
-                            value="PUBLICAR"
-                            onPress={onPublicar}/>
+                            <View style={styles.container}>
+                                <TouchableOpacity onPress={onPublicar} style={styles.containerButton} activeOpacity={.2}>
+                                    <Text style={styles.text}>PUBLICAR</Text>
+                                </TouchableOpacity>
+                            </View> 
                             : <></>
                         }
                 </ScrollView>  
