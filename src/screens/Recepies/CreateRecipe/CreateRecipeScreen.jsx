@@ -38,9 +38,8 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
             setMostrar(true)
         } else if (nombreUsado === NO_USADO){
             navigation.navigate('AddIngredientes')
-        } else if(nombreUsado === SOBREESCRIBIR){
+        } else if(nombreUsado === USADO_VISTO){
             setMostrar(false)
-            navigation.navigate('AddIngredientes')
         }
 
     },[nombreUsado])
@@ -71,7 +70,7 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
                 if(recipe.estado !== CREAR) 
                     navigation.navigate('AddIngredientes')
             } else {
-                setNombreUsado(NO_USADO);
+                navigation.navigate('AddIngredientes')
             }
         })
         .catch(error => console.log(error))
@@ -83,6 +82,7 @@ const CreateRecipeScreen = ({navigation,updateGeneralInfo,nickName,recipe,update
 
     const onContinuar = () => {
         changeSobreescribir(SOBREESCRIBIR)
+        navigation.navigate('AddIngredientes')
     }
 
     const onEditar = () => {
